@@ -6,6 +6,9 @@
 
 Honeybee extension for export a HBJSON file to IES-VE GEM file format
 
+
+![image](https://user-images.githubusercontent.com/2915573/145484209-ca484536-2d86-4f3f-9113-f4c998aa304f.png)
+
 ## Installation
 ```console
 pip install honeybee-ies
@@ -13,7 +16,15 @@ pip install honeybee-ies
 
 ## QuickStart
 ```python
-import honeybee_ies
+import pathlib
+from honeybee.model import Model
+
+path_to_hbjson = './tests/assets/sample_model_45.hbjson'
+path_to_out_folder = pathlib.Path('./tests/assets/temp')
+path_to_out_folder.mkdir(parents=True, exist_ok=True) 
+model = Model.from_hbjson(path_to_hbjson)
+# the to_gem method is added to model by honeybee-ies library
+gem_file = model.to_gem(path_to_out_folder.as_posix(), name='sample_model_45')
 
 ```
 
