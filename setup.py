@@ -18,6 +18,9 @@ setuptools.setup(
     url="https://github.com/ladybug-tools/honeybee-ies",
     packages=setuptools.find_packages(exclude=["tests*"]),
     install_requires=requirements,
+    entry_points={
+        "console_scripts": ["honeybee-ies = honeybee_ies.cli:ies"]
+    },
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
