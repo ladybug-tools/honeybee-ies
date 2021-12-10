@@ -4,13 +4,14 @@ Note: This is based on our current understaing of the objects and based on the l
 available information online.
 """
 
+# Type 4 is for shade
 SHADE_TEMPLATE = 'LAYER\n64\n' + \
     'COLOUR\n62\n' + \
     'CATEGORY\n1\n' + \
     'TYPE\n4\n' + \
-    'SUBTYPE\n2001\n' + \
+    'SUBTYPE\n0\n' + \
     'COLOURRGB\n65280\n' + \
-    'IES Shading {name}\n' \
+    'IES {name}\n' \
     '{vertices_count} 2\n' \
     '{vertices}\n' \
     '{faces}'

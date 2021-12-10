@@ -95,10 +95,25 @@ def room_to_ies(room: Room) -> str:
         open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
         faces.append('%s%d%s' % (face_str, open_count, open_str))
 
-    return SPACE_TEMPLATE.format(
+    space = SPACE_TEMPLATE.format(
         space_name=room.display_name, vertices_count=len(unique_vertices),
         face_count=len(room.faces), vertices=vertices, faces='\n'.join(faces)
-    )
+    ) 
+
+    # collect all the shades from room
+    shades = [shade_to_ies(shade) for shade in room.shades]
+    for face in room.faces:
+        for aperture in face.apertures:
+            for shade in aperture.shades:
+                shades.append(shade_to_ies(shade))
+        for door in face.doors:
+            for shade in door.shades:
+                shades.append(shade_to_ies(shade))
+
+    if shades:
+        return '\n'.join((space, '\n'.join(shades)))
+    else:
+        return space
 
 
 def model_to_ies(
@@ -117,9 +132,7 @@ def model_to_ies(
     header = 'COM GEM data file exported by Pollination Rhino\n' \
         'ANT\n'
     rooms_data = [room_to_ies(room) for room in model.rooms]
-    # export context shade - we should probably also support exporting other types of
-    # shades but I will wait for someone to ask for it!
-    shades = [shade_to_ies(shade) for shade in model.shades]
+    context_shades = [shade_to_ies(shade) for shade in model.shades]
 
     # write to GEM
     name = name or model.display_name
@@ -131,6 +144,6 @@ def model_to_ies(
     with out_file.open('w') as outf:
         outf.write(header)
         outf.write('\n'.join(rooms_data) + '\n')
-        outf.write('\n'.join(shades) + '\n')
+        outf.write('\n'.join(context_shades) + '\n')
 
     return out_file
