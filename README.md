@@ -15,6 +15,7 @@ pip install honeybee-ies
 ```
 
 ## QuickStart
+
 ```python
 import pathlib
 from honeybee.model import Model
@@ -27,6 +28,11 @@ model = Model.from_hbjson(path_to_hbjson)
 gem_file = model.to_gem(path_to_out_folder.as_posix(), name='sample_model_45')
 
 ```
+
+You can also run the command from CLI
+
+```honeybee-ies translate model-to-gem ./tests/assets/revit_sample_model.hbjson --name revit-sample-model```
+
 
 ## [API Documentation](http://ladybug-tools.github.io/honeybee-ies/docs)
 
