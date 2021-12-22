@@ -129,6 +129,9 @@ def model_to_ies(
     Returns:
         Path to exported GEM file.
     """
+    # ensure model is in metrics
+    model.convert_to_units(units='Meters')
+
     header = 'COM GEM data file exported by Pollination Rhino\n' \
         'ANT\n'
     rooms_data = [room_to_ies(room) for room in model.rooms]
