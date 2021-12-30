@@ -12,5 +12,6 @@ tox.ini
 /.vscode
 .eggs
 *.code-workspace
+.env
 
 /tests/assets/temp
