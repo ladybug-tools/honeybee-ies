@@ -23,7 +23,7 @@ def translate():
 @click.option(
     '--folder', '-f', help='Path to target folder.',
     type=click.Path(exists=False, file_okay=False, resolve_path=True,
-                    dir_okay='True'), default='.', show_default=True
+                    dir_okay=True), default='.', show_default=True
 )
 def model_to_gem(model_json, name, folder):
     """Translate a Model JSON file to an IES GEM file.
