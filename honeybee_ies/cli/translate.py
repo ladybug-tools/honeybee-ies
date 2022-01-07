@@ -5,6 +5,7 @@ import pathlib
 import logging
 
 from honeybee.model import Model as HBModel
+from dragonfly.model import Model as DFModel
 
 _logger = logging.getLogger(__name__)
 
@@ -25,16 +26,26 @@ def translate():
     type=click.Path(exists=False, file_okay=False, resolve_path=True,
                     dir_okay=True), default='.', show_default=True
 )
-def model_to_gem(model_json, name, folder):
+@click.option(
+    '--honeybee/--dragonfly', is_flag=True, help='A flag to indicate if the input '
+    'file is a honeybee or a dragonfly file. Default is a Honeybee file.',
+    default=True
+)
+def model_to_gem(model_json, name, folder, honeybee):
     """Translate a Model JSON file to an IES GEM file.
     \b
 
     Args:
-        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        model_json: Full path to a Model JSON file (HBJSON/DFJSON) or a Model pkl
+            (HBpkl/DFpkl) file.
 
     """
     try:
-        model = HBModel.from_file(model_json)
+        if honeybee:
+            model = HBModel.from_file(model_json)
+        else:
+            model = DFModel.from_file(model_json)
+
         folder = pathlib.Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
         model.to_gem(folder.as_posix(), name=name)

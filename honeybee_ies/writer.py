@@ -3,6 +3,7 @@ from typing import List
 
 from ladybug_geometry.geometry3d import Face3D
 from honeybee.model import Model as HBModel, Shade, Room
+from dragonfly.model import Model as DFModel
 
 from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE
 
@@ -150,3 +151,23 @@ def hb_model_to_ies(
         outf.write('\n'.join(context_shades) + '\n')
 
     return out_file
+
+
+def df_model_to_ies(
+        model: DFModel, folder: str = '.', name: str = None) -> pathlib.Path:
+    """Export a dragonfly model to an IES GEM file.
+
+    Args:
+        model: A dragonfly model.
+        folder: Path to target folder to export the file. Default is current folder.
+        name: An optional name for exported file. By default the name of the model will
+            be used.
+
+    Returns:
+        Path to exported GEM file.
+    """
+    hb_models = model.to_honeybee(
+        object_per_model='District', use_multiplier=False,
+        solve_ceiling_adjacencies=False
+    )
+    return hb_model_to_ies(hb_models[0], folder, name)
