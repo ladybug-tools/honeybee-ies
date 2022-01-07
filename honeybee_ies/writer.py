@@ -2,7 +2,7 @@ import pathlib
 from typing import List
 
 from ladybug_geometry.geometry3d import Face3D
-from honeybee.model import Model, Shade, Room
+from honeybee.model import Model as HBModel, Shade, Room
 
 from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE
 
@@ -116,8 +116,8 @@ def room_to_ies(room: Room) -> str:
         return space
 
 
-def model_to_ies(
-        model: Model, folder: str = '.', name: str = None) -> pathlib.Path:
+def hb_model_to_ies(
+        model: HBModel, folder: str = '.', name: str = None) -> pathlib.Path:
     """Export a honeybee model to an IES GEM file.
 
     Args:

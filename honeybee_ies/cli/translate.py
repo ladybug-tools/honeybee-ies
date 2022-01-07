@@ -4,7 +4,7 @@ import sys
 import pathlib
 import logging
 
-from honeybee.model import Model
+from honeybee.model import Model as HBModel
 
 _logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def model_to_gem(model_json, name, folder):
 
     """
     try:
-        model = Model.from_file(model_json)
+        model = HBModel.from_file(model_json)
         folder = pathlib.Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
         model.to_gem(folder.as_posix(), name=name)
