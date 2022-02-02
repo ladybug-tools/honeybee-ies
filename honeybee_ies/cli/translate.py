@@ -5,11 +5,12 @@ import pathlib
 import logging
 
 from honeybee.model import Model
+from honeybee_ies.reader import model_from_ies
 
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands for translating Honeybee JSON files to IES files.')
+@click.group(help='Commands for translating Honeybee JSON files to and from IES files.')
 def translate():
     pass
 
@@ -38,6 +39,37 @@ def model_to_gem(model_json, name, folder):
         folder = pathlib.Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
         model.to_gem(folder.as_posix(), name=name)
+    except Exception as e:
+        _logger.exception('Model translation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@translate.command('gem-to-model')
+@click.argument('gem-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--name', '-n', help='Name of the output file.', default="model", show_default=True
+)
+@click.option(
+    '--folder', '-f', help='Path to target folder.',
+    type=click.Path(exists=False, file_okay=False, resolve_path=True,
+                    dir_okay=True), default='.', show_default=True
+)
+def model_to_gem(gem_file, name, folder):
+    """Translate an IES GEM file to a HBJSON model.
+    \b
+
+    Args:
+        gem-file: Full path to an IES VE GEM file.
+
+    """
+    try:
+        model = model_from_ies(gem_file)
+        folder = pathlib.Path(folder)
+        folder.mkdir(parents=True, exist_ok=True)
+        model.to_hbjson(name=name, folder=folder.as_posix())
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
