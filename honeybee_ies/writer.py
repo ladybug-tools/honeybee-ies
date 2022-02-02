@@ -10,13 +10,13 @@ from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE
 def _opening_to_ies(
         parent_geo: Face3D, opening_geos: List[Face3D], opening_type: int = 0) -> str:
     """Translate an opening to gem format.
-    
+
     Args:
         parent_geo: Geometry of the parent object.
         opening_geos: A list of Face3D geometries for openings.
         opening_type: An integer between 0-2. 0 for apertures, 1 for doors and 2 for
             holes.
-    
+
     Returns:
         A formatted string for the opening.
 
@@ -98,7 +98,7 @@ def room_to_ies(room: Room) -> str:
     space = SPACE_TEMPLATE.format(
         space_name=room.display_name, vertices_count=len(unique_vertices),
         face_count=len(room.faces), vertices=vertices, faces='\n'.join(faces)
-    ) 
+    )
 
     # collect all the shades from room
     shades = [shade_to_ies(shade) for shade in room.shades]
@@ -132,7 +132,7 @@ def model_to_ies(
     # ensure model is in metrics
     model.convert_to_units(units='Meters')
 
-    header = 'COM GEM data file exported by Pollination Rhino\n' \
+    header = 'COM GEM data file exported by Pollination\n' \
         'ANT\n'
     rooms_data = [room_to_ies(room) for room in model.rooms]
     context_shades = [shade_to_ies(shade) for shade in model.shades]
