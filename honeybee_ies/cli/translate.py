@@ -57,7 +57,7 @@ def model_to_gem(model_json, name, folder):
     type=click.Path(exists=False, file_okay=False, resolve_path=True,
                     dir_okay=True), default='.', show_default=True
 )
-def model_to_gem(gem_file, name, folder):
+def gem_to_model(gem_file, name, folder):
     """Translate an IES GEM file to a HBJSON model.
     \b
 
