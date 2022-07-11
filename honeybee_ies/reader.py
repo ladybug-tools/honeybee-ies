@@ -63,13 +63,15 @@ def _parse_gem_segment(segment: str):
     """
     info, segments = re.split('\nIES ', segment)
     type_ = int(re.findall(r'^TYPE\n(\d)', info, re.MULTILINE)[0])
-    assert type_ in (1, 4), \
-        f'Only types 1 and 4 for rooms and shades are valid. Invalid type: {type_}'
+    assert type_ in (1, 2, 4), \
+        f'Only types 1, 2 and 4 for rooms and shades are valid. Invalid type: {type_}.' \
+        'Contact the developers for adding support for a new type'
 
     # remove empty lines if any
     content = iter(l for l in segments.split('\n') if l.strip())
     display_name = next(content)
-    identifier = clean_and_id_ep_string(clean_string(display_name))
+    cleaned_display_name = clean_string(display_name)
+    identifier = clean_and_id_ep_string(cleaned_display_name)
     ver_count, face_count = [int(v) for v in next(content).split()]
     vertices = [
         Point3D(*[float(v) for v in next(content).split()])
@@ -109,9 +111,20 @@ def _parse_gem_segment(segment: str):
             face = Face(str(uuid.uuid4()), geometry=geometry)
             face.add_apertures(apertures)
             face.add_doors(doors)
-        elif type_ == 4:
+        elif type_ == 4 or type_ == 2:
+            # local and context shades
+            # 4 is for local shades attached to the building and 2 is for neighbor
+            # buildings
+            is_detached = True if type_ == 2 else False
             geometry = Face3D(boundary)
-            face = Shade(str(uuid.uuid4()), geometry=geometry, is_detached=True)
+            face = Shade(str(uuid.uuid4()), geometry=geometry, is_detached=is_detached)
+            # use group id to group the shades together.
+            try:
+                face.user_data['__group_id__'] = cleaned_display_name
+            except TypeError:
+                face.user_data = {'__group_id__': cleaned_display_name}
+            face.display_name = display_name
+
         faces.append(face)
 
     if type_ == 1:
