@@ -2,7 +2,7 @@ import pathlib
 from typing import List
 
 from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D, Vector3D
-from honeybee.model import Model, Shade, Room
+from honeybee.model import Model, Shade, Room, AirBoundary
 
 from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE, ADJ_BLDG_TEMPLATE
 
@@ -151,11 +151,25 @@ def room_to_ies(room: Room) -> str:
     vertices = _vertices_to_ies(unique_vertices)
 
     faces = []
+    air_boundary_count = 0
+    _key = '__ies_import__'
     for face_i, face in zip(room.geometry.face_indices, room.faces):
+        if isinstance(face.type, AirBoundary) and face.user_data \
+                and _key in face.user_data:
+            # This air boundary was created during the process of importing holes
+            # from an IES GEM file. We don't write these air boundaries back to GEM.
+            air_boundary_count += 1
+            continue
+
         index = [str(v + 1) for v in face_i[0]]
         face_str = '%d %s \n' % (len(index), ' '.join(index))
         open_count, openings, fg = 0, [], face.geometry
-        if fg.has_holes:
+        if isinstance(face.type, AirBoundary):
+            # add the face itself as the hole
+            sub_faces = [Face3D(fg.vertices, fg.plane)]
+            openings.append(_opening_to_ies(fg, sub_faces, 2))
+            open_count += 1
+        elif fg.has_holes:
             sub_faces = [Face3D(hole, fg.plane) for hole in fg.holes]
             openings.append(_opening_to_ies(fg, sub_faces, 2))
             open_count += len(sub_faces)
@@ -172,7 +186,8 @@ def room_to_ies(room: Room) -> str:
 
     space = SPACE_TEMPLATE.format(
         space_name=room.display_name, vertices_count=len(unique_vertices),
-        face_count=len(room.faces), vertices=vertices, faces='\n'.join(faces)
+        face_count=len(room.faces) - air_boundary_count,
+        vertices=vertices, faces='\n'.join(faces)
     )
 
     # collect all the shades from room

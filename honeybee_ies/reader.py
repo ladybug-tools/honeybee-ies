@@ -4,7 +4,8 @@ from typing import Iterator, List, Tuple
 import uuid
 
 from ladybug_geometry.geometry3d import Face3D, Point3D
-from honeybee.model import Model, Shade, Room, Face, Aperture, Door
+from ladybug_geometry.intersection2d import closest_point2d_on_line2d
+from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
 from honeybee.typing import clean_string, clean_and_id_ep_string
 
 
@@ -33,25 +34,49 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
         x = (vertices[1] - origin).normalize()
         y = (vertices[-1] - origin).normalize()
 
+    # This is how the next line looks
+    # 5 2
     ver_count, opening_type = [int(v) for v in next(content).split()]
 
+    # calculate the vertices from X, Y values
+    # 0.000000     0.906100
+    # 0.000000     0.000000
+    # 10.373100     0.000000
+    boundary_2d = geometry.boundary_polygon2d
+
+    def _move_vertex(xx_m, yy_m):
+        vertex = origin.move(x * xx_m)  # move in x direction
+        vertex = vertex.move(y * yy_m) # move in y direction
+        vertex_2d = geometry._plane.xyz_to_xy(vertex)
+        return vertex, vertex_2d
+
     opening_vertices = []
-    x_m_0 = False
-    y_m_0 = False
+    push_dist = 0.02
+
     for _ in range(ver_count):
         x_m, y_m = [float(v) for v in next(content).split()]
-        if x_m == 0:
-            x_m_0 = True
-        if y_m == 0:
-            y_m_0 = True
-        vertex = origin.move(x * x_m)  # move in x direction
-        vertex = vertex.move(y * y_m)  # move in y direction
-        opening_vertices.append(vertex)
-    # move the aperture if it touches the edges
-    if x_m_0:
-        opening_vertices = [v.move(x * 0.02) for v in opening_vertices]
-    if y_m_0:
-        opening_vertices = [v.move(y * 0.02) for v in opening_vertices]
+        # change 0 value to a cm - this will move the point inwards
+        x_m = x_m or push_dist
+        y_m = y_m or push_dist
+        # try finding the correct vertices that doesn't touch the edge
+        # this is not a problem in IES but it is in the Rhino plugin and EP
+        moves = [
+            (x_m, y_m),
+            (x_m + push_dist, y_m), (x_m, y_m + push_dist),
+            (x_m - push_dist, y_m), (x_m, y_m - push_dist),
+            (x_m + push_dist, y_m + push_dist), (x_m - push_dist, y_m - push_dist),
+            (x_m - push_dist, y_m + push_dist), (x_m + push_dist, y_m - push_dist),
+        ]
+        for (xx, yy) in moves:
+            vertex, vertex_2d = _move_vertex(xx, yy)
+            dist = min(seg.distance_to_point(vertex_2d) for seg in boundary_2d.segments)
+            if boundary_2d.is_point_inside_check(vertex_2d) and dist > push_dist * 0.5:
+                opening_vertices.append(vertex)
+                break
+        else:
+            # using the initial option - technically we should never get here
+            vertex, vertex_2d = _move_vertex(*moves[0])
+            opening_vertices.append(vertex)
 
     return opening_vertices, opening_type
 
@@ -111,6 +136,14 @@ def _parse_gem_segment(segment: str):
             face = Face(str(uuid.uuid4()), geometry=geometry)
             face.add_apertures(apertures)
             face.add_doors(doors)
+            if holes:
+                # add an AirBoundary to cover the hole
+                for hole in holes:
+                    hole_geo = Face3D(hole)
+                    hole_face = Face(
+                        str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
+                    )
+                    faces.append(hole_face)
         elif type_ == 4 or type_ == 2:
             # local and context shades
             # 4 is for local shades attached to the building and 2 is for neighbor
