@@ -5,6 +5,7 @@ from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D, Vector3D
 from honeybee.model import Model, Shade, Room, AirBoundary
 
 from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE, ADJ_BLDG_TEMPLATE
+from .reader import Z_AXIS, ROOF_ANGLE_TOLERANCE
 
 
 def _opening_to_ies(
@@ -23,6 +24,8 @@ def _opening_to_ies(
     """
     if parent_geo.plane.n.z in (1, -1):
         origin, flip = parent_geo.upper_right_corner, True
+    elif parent_geo.plane.n.angle(Z_AXIS) < ROOF_ANGLE_TOLERANCE:
+        origin, flip = parent_geo.lower_left_corner, True
     else:
         origin, flip = parent_geo.lower_left_corner, False
     openings = []
