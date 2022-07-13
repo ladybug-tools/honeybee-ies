@@ -1,12 +1,15 @@
+import math
 import pathlib
 import re
 from typing import Iterator, List, Tuple
 import uuid
 
-from ladybug_geometry.geometry3d import Face3D, Point3D
-from ladybug_geometry.intersection2d import closest_point2d_on_line2d
+from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D
 from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
 from honeybee.typing import clean_string, clean_and_id_ep_string
+
+Z_AXIS = Vector3D(0, 0, 1)
+ROOF_ANGLE_TOLERANCE = math.radians(10)
 
 
 def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D], int]:
@@ -21,9 +24,17 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
         opening_type: An integer between 0-2. 0 for apertures, 1 for doors and 2 for
             holes.
     """
+
     if geometry.plane.n.z in (1, -1):
+        # horizontal faces
         origin = geometry.upper_right_corner
         vertices = geometry.upper_right_counter_clockwise_vertices
+        x = geometry.plane.x.reverse()
+        y = geometry.plane.y.reverse()
+    elif geometry.plane.n.angle(Z_AXIS) < ROOF_ANGLE_TOLERANCE:
+        # almost horizontal faces
+        vertices = geometry.lower_left_counter_clockwise_vertices
+        origin = geometry.lower_left_corner
         x = geometry.plane.x.reverse()
         y = geometry.plane.y.reverse()
     else:
@@ -143,6 +154,7 @@ def _parse_gem_segment(segment: str):
                     hole_face = Face(
                         str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
                     )
+                    hole_face.user_data = {'__ies_import__': True}
                     faces.append(hole_face)
         elif type_ == 4 or type_ == 2:
             # local and context shades
@@ -183,7 +195,8 @@ def model_from_ies(gem: str) -> Model:
             shades.extend(r)
 
     model = Model(
-        clean_string(gem_file.stem), rooms=rooms, units='Meters', orphaned_shades=shades
+        clean_string(gem_file.stem), rooms=rooms, units='Meters', orphaned_shades=shades,
+        tolerance=0.01
     )
     model.display_name = gem_file.stem
     return model
