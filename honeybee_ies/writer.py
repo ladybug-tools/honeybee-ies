@@ -132,7 +132,7 @@ def shades_to_ies(shades: List[Shade], thickness: float = 0.1) -> str:
             else:
                 shade_groups[group_id].append(shade)
 
-    single_shades = '\n'.join([_shade_to_ies(shade) for shade in no_groups])
+    single_shades = '\n'.join([_shade_to_ies(shade, thickness) for shade in no_groups])
     group_shades = '\n'.join(
         [_shade_group_to_ies(shades) for shades in shade_groups.values()]
         )
