@@ -76,8 +76,10 @@ def _shade_group_to_ies(shades: List[Shade]) -> str:
         [shade.geometry for shade in shades], tolerance=0.001
     )
     first_shade = shades[0]
+    # remove new lines from the name
+    shade_name = ' '.join(first_shade.display_name.split())
     return _shade_geometry_to_ies(
-        group_geometry, first_shade.display_name, first_shade.is_detached
+        group_geometry, shade_name, first_shade.is_detached
     )
 
 
@@ -99,8 +101,10 @@ def _shade_to_ies(shade: Shade, thickness: float = 0.1) -> str:
     move_vector = geometry.normal.reverse().normalize() * thickness / 2
     base_geo = geometry.move(move_vector)
     shade_geo = Polyface3D.from_offset_face(base_geo, thickness)
+    # remove new lines from the name
+    shade_name = ' '.join(shade.display_name.split())
     return _shade_geometry_to_ies(
-        shade_geo, shade.display_name, is_detached=shade.is_detached
+        shade_geo, shade_name, is_detached=shade.is_detached
     )
 
 
@@ -187,8 +191,10 @@ def room_to_ies(room: Room) -> str:
         open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
         faces.append('%s%d%s' % (face_str, open_count, open_str))
 
+    # remove new lines from the name
+    room_name = ' '.join(room.display_name.split())
     space = SPACE_TEMPLATE.format(
-        space_name=room.display_name, vertices_count=len(unique_vertices),
+        space_name=room_name, vertices_count=len(unique_vertices),
         face_count=len(room.faces) - air_boundary_count,
         vertices=vertices, faces='\n'.join(faces)
     )
