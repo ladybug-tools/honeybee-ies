@@ -36,3 +36,15 @@ def test_air_boundary():
         '   0.000000    3.000000\n'
 
     assert ab_str in outf.read_text()
+
+
+def test_display_name_clean_up():
+    in_file = './tests/assets/multiline_name_test.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True) 
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(model, out_folder.as_posix(), name='multiline_name_test')
+    assert outf.exists()
+    ab_str = 'IES first line second line\n'
+
+    assert ab_str in outf.read_text()
