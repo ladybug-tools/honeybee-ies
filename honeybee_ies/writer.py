@@ -1,7 +1,7 @@
 import pathlib
 from typing import List
 
-from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D, Vector3D
+from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
 from honeybee.model import Model, Shade, Room, AirBoundary
 
 from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE, ADJ_BLDG_TEMPLATE
@@ -84,23 +84,28 @@ def _shade_group_to_ies(shades: List[Shade]) -> str:
 
 
 
-def _shade_to_ies(shade: Shade, thickness: float = 0.1) -> str:
+def _shade_to_ies(shade: Shade, thickness: float = 0.01) -> str:
     """Convert a single Honeybee Shade to a GEM string.
 
     Args:
         shade: A Shade face.
         thickness:The thickness of the shade face in meters. IES doesn't consider the
             effect of shades with no thickness in SunCalc. This function extrudes the
-            geometry to create a closed volume for the shade. Default: 0.1
+            geometry to create a closed volume for the shade. Default: 0.01
 
     Returns:
         A formatted string that represents this shade in GEM format.
 
     """
-    geometry = shade.geometry
-    move_vector = geometry.normal.reverse().normalize() * thickness / 2
-    base_geo = geometry.move(move_vector)
-    shade_geo = Polyface3D.from_offset_face(base_geo, thickness)
+    if thickness == 0:
+        # don't add the thickness
+        shade_geo = shade.geometry
+    else:
+        geometry = shade.geometry
+        move_vector = geometry.normal.reverse().normalize() * thickness / 2
+        base_geo = geometry.move(move_vector)
+        shade_geo = Polyface3D.from_offset_face(base_geo, thickness)
+
     # remove new lines from the name
     shade_name = ' '.join(shade.display_name.split())
     return _shade_geometry_to_ies(
@@ -108,7 +113,7 @@ def _shade_to_ies(shade: Shade, thickness: float = 0.1) -> str:
     )
 
 
-def shades_to_ies(shades: List[Shade], thickness: float = 0.1) -> str:
+def shades_to_ies(shades: List[Shade], thickness: float = 0.01) -> str:
     """Convert a list of Shades to a GEM string.
 
     Args:
@@ -116,7 +121,7 @@ def shades_to_ies(shades: List[Shade], thickness: float = 0.1) -> str:
         thickness:The thickness of the shade face in meters. This value will be used to
             extrude shades with no group id. IES doesn't consider the effect of shades
             with no thickness in SunCalc. This function extrudes the geometry to create
-            a closed volume for the shade. Default: 0.1
+            a closed volume for the shade. Default: 0.01
 
     Returns:
         A formatted string that represents this shade in GEM format.
