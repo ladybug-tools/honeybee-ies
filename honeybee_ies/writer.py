@@ -149,12 +149,15 @@ def shades_to_ies(shades: List[Shade], thickness: float = 0.01) -> str:
     return '\n'.join((single_shades, group_shades))
 
 
-def room_to_ies(room: Room) -> str:
+def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
     """Convert a Honeybee Shade to a GEM string.
 
     Args:
         room: A Honeybee Room.
-
+        shade_thickness:The thickness of the shade face in meters. This value will be
+            used to extrude shades with no group id. IES doesn't consider the effect of
+            shades with no thickness in SunCalc. This function extrudes the geometry to
+            create a closed volume for the shade. Default: 0.01
     Returns:
         A formatted string that represents this room in GEM format.
 
@@ -214,14 +217,15 @@ def room_to_ies(room: Room) -> str:
             for shade in door.shades:
                 shades.append(shade)
     if shades:
-        formatted_shades = shades_to_ies(shades=shades)
+        formatted_shades = shades_to_ies(shades=shades, thickness=shade_thickness)
         return '\n'.join((space, formatted_shades))
     else:
         return space
 
 
 def model_to_ies(
-        model: Model, folder: str = '.', name: str = None) -> pathlib.Path:
+    model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.01
+        ) -> pathlib.Path:
     """Export a honeybee model to an IES GEM file.
 
     Args:
@@ -229,6 +233,10 @@ def model_to_ies(
         folder: Path to target folder to export the file. Default is current folder.
         name: An optional name for exported file. By default the name of the model will
             be used.
+        shade_thickness:The thickness of the shade face in meters. This value will be
+            used to extrude shades with no group id. IES doesn't consider the effect of
+            shades with no thickness in SunCalc. This function extrudes the geometry to
+            create a closed volume for the shade. Default: 0.01
 
     Returns:
         Path to exported GEM file.
@@ -238,8 +246,10 @@ def model_to_ies(
 
     header = 'COM GEM data file exported by Pollination\n' \
         'ANT\n'
-    rooms_data = [room_to_ies(room) for room in model.rooms]
-    context_shades = shades_to_ies(model.shades)
+    rooms_data = [
+        room_to_ies(room, shade_thickness=shade_thickness) for room in model.rooms
+    ]
+    context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
 
     # write to GEM
     name = name or model.display_name

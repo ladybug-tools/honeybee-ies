@@ -48,3 +48,24 @@ def test_display_name_clean_up():
     ab_str = 'IES first line second line\n'
 
     assert ab_str in outf.read_text()
+
+
+def test_0_shade_thickness():
+    in_file = './tests/assets/single_face_shade.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True) 
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(
+        model, out_folder.as_posix(), name='zero_shade_thickness', shade_thickness=0
+    )
+    assert outf.exists()
+    ab_str = 'IES Shade 13c9e\n' \
+      '4 1\n' \
+      '   2.500000    0.000000    2.500000\n' \
+      '   -1.500000    0.000000    2.500000\n' \
+      '   -1.500000    -3.000000    2.500000\n' \
+      '   2.500000    -3.000000    2.500000\n' \
+      '4 1 2 3 4 \n' \
+      '0'
+
+    assert ab_str in outf.read_text()

@@ -26,7 +26,14 @@ def translate():
     type=click.Path(exists=False, file_okay=False, resolve_path=True,
                     dir_okay=True), default='.', show_default=True
 )
-def model_to_gem(model_json, name, folder):
+@click.option(
+    '--shade-thickness', '-st', help='Optional value for shade thickness in meters. '
+    'This value will be used to extrude shades with no group id. IES doesn\'t consider '
+    'the effect of shades with no thickness in SunCalc. This function extrudes the '
+    'geometry to create a closed volume for the shade.',
+    type=click.FLOAT, default=0.01, show_default=True
+)
+def model_to_gem(model_json, name, folder, shade_thickness):
     """Translate a Model JSON file to an IES GEM file.
     \b
 
@@ -38,7 +45,7 @@ def model_to_gem(model_json, name, folder):
         model = Model.from_file(model_json)
         folder = pathlib.Path(folder)
         folder.mkdir(parents=True, exist_ok=True)
-        model.to_gem(folder.as_posix(), name=name)
+        model.to_gem(folder.as_posix(), name=name, shade_thickness=shade_thickness)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
