@@ -6,6 +6,7 @@ import uuid
 
 from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D
 from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
+from honeybee.boundarycondition import Outdoors, Ground
 from honeybee.typing import clean_string, clean_and_id_ep_string
 
 Z_AXIS = Vector3D(0, 0, 1)
@@ -145,6 +146,14 @@ def _parse_gem_segment(segment: str):
         if type_ == 1:
             geometry = Face3D(boundary, holes=holes)
             face = Face(str(uuid.uuid4()), geometry=geometry)
+            if apertures or doors:
+                # change the boundary condition if it is set to ground
+                if isinstance(face.boundary_condition, Ground):
+                    print(
+                        'Changing boundary condition from Ground to Outdoors for ' \
+                        f'{face.display_name} in {display_name} [{identifier}].'
+                    )
+                    face.boundary_condition = Outdoors()
             face.add_apertures(apertures)
             face.add_doors(doors)
             if holes:
