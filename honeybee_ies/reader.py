@@ -15,7 +15,7 @@ ROOF_ANGLE_TOLERANCE = math.radians(10)
 
 def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D], int]:
     """Translate an opening from gem format.
-    
+
     Args:
         parent_geo: Geometry of the parent object.
         content: A GEM string
@@ -140,7 +140,6 @@ def _parse_gem_segment(segment: str):
                 # create a hole
                 holes.append(opening_vertices)
             else:
-                # create 
                 raise ValueError(f'Unsupported opening type: {opening_type}')
 
         if type_ == 1:
@@ -150,7 +149,7 @@ def _parse_gem_segment(segment: str):
                 # change the boundary condition if it is set to ground
                 if isinstance(face.boundary_condition, Ground):
                     print(
-                        'Changing boundary condition from Ground to Outdoors for ' \
+                        'Changing boundary condition from Ground to Outdoors for '
                         f'{face.display_name} in {display_name} [{identifier}].'
                     )
                     face.boundary_condition = Outdoors()
@@ -170,7 +169,7 @@ def _parse_gem_segment(segment: str):
             # 4 is for local shades attached to the building and 2 is for neighbor
             # buildings
             is_detached = True if type_ == 2 else False
-            geometry = Face3D(boundary)
+            geometry = Face3D(boundary, holes=holes)
             face = Shade(str(uuid.uuid4()), geometry=geometry, is_detached=is_detached)
             # use group id to group the shades together.
             try:

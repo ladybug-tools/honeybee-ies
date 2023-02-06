@@ -60,12 +60,34 @@ def test_0_shade_thickness():
     )
     assert outf.exists()
     ab_str = 'IES Shade 13c9e\n' \
-      '4 1\n' \
-      '   2.500000    0.000000    2.500000\n' \
-      '   -1.500000    0.000000    2.500000\n' \
-      '   -1.500000    -3.000000    2.500000\n' \
-      '   2.500000    -3.000000    2.500000\n' \
-      '4 1 2 3 4 \n' \
-      '0'
+        '4 1\n' \
+        '   2.500000    0.000000    2.500000\n' \
+        '   -1.500000    0.000000    2.500000\n' \
+        '   -1.500000    -3.000000    2.500000\n' \
+        '   2.500000    -3.000000    2.500000\n' \
+        '4 1 2 3 4 \n' \
+        '0'
 
     assert ab_str in outf.read_text()
+
+
+def test_shade_with_holes():
+    in_file = './tests/assets/shade_with_holes.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True)
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(model, out_folder.as_posix(), name='shade_with_holes')
+    assert outf.exists()
+
+    hole_str = '4 2\n' \
+        '   8.000000    2.000000\n' \
+        '   8.000000    4.000000\n' \
+        '   3.000000    4.000000\n' \
+        '   3.000000    2.000000\n' \
+        '4 2\n' \
+        '   9.000000    7.000000\n' \
+        '   9.000000    9.000000\n' \
+        '   7.000000    9.000000\n' \
+        '   7.000000    7.000000\n'
+
+    assert hole_str in outf.read_text()

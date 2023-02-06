@@ -48,21 +48,30 @@ def _vertices_to_ies(vertices: List[Point3D]) -> str:
 
 
 def _shade_geometry_to_ies(geometry: Polyface3D, name: str, is_detached=True):
+    open_count = 0
     unique_vertices = geometry.vertices
     vertices = _vertices_to_ies(unique_vertices)
-    index = [str(i + 1) for i in range(len(unique_vertices))]
     faces = []
-    for face_i in geometry.face_indices:
+
+    for face_i, face in zip(geometry.face_indices, geometry.faces):
         index = [str(v + 1) for v in face_i[0]]
-        face = '%d %s \n0' % (len(index), ' '.join(index))
-        faces.append(face)
+        face_str = '%d %s \n' % (len(index), ' '.join(index))
+        open_count, openings = 0, []
+        if face.has_holes:
+            sub_faces = [Face3D(hole, face.plane) for hole in face.holes]
+            openings.append(_opening_to_ies(face, sub_faces, 2))
+            open_count += len(sub_faces)
+
+        open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
+        faces.append('%s%d%s' % (face_str, open_count, open_str))
 
     template = ADJ_BLDG_TEMPLATE if is_detached else SHADE_TEMPLATE
     return template.format(
         name=name,
         vertices_count=len(unique_vertices),
         vertices=vertices,
-        faces='\n'.join(faces), face_count=len(geometry.faces)
+        faces='\n'.join(faces),
+        face_count=len(geometry.faces)
     )
 
 
@@ -81,7 +90,6 @@ def _shade_group_to_ies(shades: List[Shade]) -> str:
     return _shade_geometry_to_ies(
         group_geometry, shade_name, first_shade.is_detached
     )
-
 
 
 def _shade_to_ies(shade: Shade, thickness: float = 0.01) -> str:
