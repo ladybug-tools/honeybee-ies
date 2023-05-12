@@ -1,5 +1,5 @@
 import pathlib
-from typing import List
+from typing import List, Union
 
 from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
 from honeybee.model import Model, Shade, Room, AirBoundary
@@ -47,31 +47,56 @@ def _vertices_to_ies(vertices: List[Point3D]) -> str:
     return vertices
 
 
-def _shade_geometry_to_ies(geometry: Polyface3D, name: str, is_detached=True):
+def _shade_geometry_to_ies(
+    geometry: Union[Face3D, Polyface3D], name: str, is_detached=True
+        ):
+
     open_count = 0
-    unique_vertices = geometry.vertices
-    vertices = _vertices_to_ies(unique_vertices)
     faces = []
 
-    for face_i, face in zip(geometry.face_indices, geometry.faces):
-        index = [str(v + 1) for v in face_i[0]]
+    if isinstance(geometry, Polyface3D):
+        unique_vertices = geometry.vertices
+        vertices = _vertices_to_ies(unique_vertices)
+        for face_i, face in zip(geometry.face_indices, geometry.faces):
+            index = [str(v + 1) for v in face_i[0]]
+            face_str = '%d %s \n' % (len(index), ' '.join(index))
+            open_count, openings = 0, []
+            if face.has_holes:
+                sub_faces = [Face3D(hole, face.plane) for hole in face.holes]
+                openings.append(_opening_to_ies(face, sub_faces, 2))
+                open_count += len(sub_faces)
+
+            open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
+            faces.append('%s%d%s' % (face_str, open_count, open_str))
+        face_count = len(geometry.faces)
+    else:
+        # Face 3D
+        unique_vertices = geometry.lower_left_counter_clockwise_vertices
+        vertices = _vertices_to_ies(unique_vertices)
+        index = [str(v + 1) for v in range(len(unique_vertices))]
         face_str = '%d %s \n' % (len(index), ' '.join(index))
         open_count, openings = 0, []
-        if face.has_holes:
+        if geometry.has_holes:
             sub_faces = [Face3D(hole, face.plane) for hole in face.holes]
             openings.append(_opening_to_ies(face, sub_faces, 2))
             open_count += len(sub_faces)
-
         open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
         faces.append('%s%d%s' % (face_str, open_count, open_str))
+        face_count = 1
 
     template = ADJ_BLDG_TEMPLATE if is_detached else SHADE_TEMPLATE
+
+    if len(unique_vertices) < 3:
+        # a check for line-like mesh faces
+        print('Invalid line-like shade object found and removed.')
+        return ''
+
     return template.format(
         name=name,
         vertices_count=len(unique_vertices),
         vertices=vertices,
         faces='\n'.join(faces),
-        face_count=len(geometry.faces)
+        face_count=face_count
     )
 
 
