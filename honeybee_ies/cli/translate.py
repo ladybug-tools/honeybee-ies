@@ -31,7 +31,7 @@ def translate():
     'This value will be used to extrude shades with no group id. IES doesn\'t consider '
     'the effect of shades with no thickness in SunCalc. This function extrudes the '
     'geometry to create a closed volume for the shade.',
-    type=click.FLOAT, default=0.01, show_default=True
+    type=click.FLOAT, default=0, show_default=True
 )
 def model_to_gem(model_json, name, folder, shade_thickness):
     """Translate a Model JSON file to an IES GEM file.
