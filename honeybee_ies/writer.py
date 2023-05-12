@@ -2,7 +2,7 @@ import pathlib
 from typing import List, Union
 
 from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
-from honeybee.model import Model, Shade, Room, AirBoundary
+from honeybee.model import Model, Shade, Room, AirBoundary, RoofCeiling, Floor
 
 from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE, ADJ_BLDG_TEMPLATE
 from .reader import Z_AXIS, ROOF_ANGLE_TOLERANCE
@@ -195,9 +195,17 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
         A formatted string that represents this room in GEM format.
 
     """
+
+    def _find_index(vertex: Point3D, vertices: List[Point3D], tolerance=0.01):
+        for c, v in enumerate(vertices):
+            if v.distance_to_point(vertex) <= tolerance:
+                return str(c + 1)
+        else:
+            raise ValueError(f'Failed to find {vertex} in the vertices.')
+
     unique_vertices = room.geometry.vertices
     vertices = _vertices_to_ies(unique_vertices)
-
+    face_count = len(room.faces)
     faces = []
     air_boundary_count = 0
     _key = '__ies_import__'
@@ -208,35 +216,49 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
             # from an IES GEM file. We don't write these air boundaries back to GEM.
             air_boundary_count += 1
             continue
+        if isinstance(face.type, (RoofCeiling, Floor)) and face.geometry.has_holes:
+            # IES doesn't like rooms with holes in them. We need to break the face
+            # into smaller faces
+            fgs = face.geometry.split_through_holes()
+            face_count += len(fgs) - 1
+            indexes = [
+                [
+                    _find_index(v, unique_vertices)
+                    for v in fg.lower_left_counter_clockwise_vertices
+                ] for fg in fgs
+            ]
+        else:
+            fgs = [face.geometry]
+            indexes = [[str(v + 1) for v in face_i[0]]]
 
-        index = [str(v + 1) for v in face_i[0]]
-        face_str = '%d %s \n' % (len(index), ' '.join(index))
-        open_count, openings, fg = 0, [], face.geometry
-        if isinstance(face.type, AirBoundary):
-            # add the face itself as the hole
-            sub_faces = [Face3D(fg.vertices, fg.plane)]
-            openings.append(_opening_to_ies(fg, sub_faces, 2))
-            open_count += 1
-        elif fg.has_holes:
-            sub_faces = [Face3D(hole, fg.plane) for hole in fg.holes]
-            openings.append(_opening_to_ies(fg, sub_faces, 2))
-            open_count += len(sub_faces)
-        if len(face.apertures) != 0:
-            sub_faces = [ap.geometry for ap in face.apertures]
-            openings.append(_opening_to_ies(fg, sub_faces, 0))
-            open_count += len(sub_faces)
-        if len(face.doors) != 0:
-            sub_faces = [dr.geometry for dr in face.doors]
-            openings.append(_opening_to_ies(fg, sub_faces, 1))
-            open_count += len(sub_faces)
-        open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
-        faces.append('%s%d%s' % (face_str, open_count, open_str))
+        for index, fg in zip(indexes, fgs):
+            face_str = '%d %s \n' % (len(index), ' '.join(index))
+            open_count, openings = 0, []
+            if isinstance(face.type, AirBoundary):
+                # add the face itself as the hole
+                sub_faces = [Face3D(fg.vertices, fg.plane)]
+                openings.append(_opening_to_ies(fg, sub_faces, 2))
+                open_count += 1
+            elif fg.has_holes:
+                sub_faces = [Face3D(hole, fg.plane) for hole in fg.holes]
+                openings.append(_opening_to_ies(fg, sub_faces, 2))
+                open_count += len(sub_faces)
+            if len(face.apertures) != 0:
+                sub_faces = [ap.geometry for ap in face.apertures]
+                openings.append(_opening_to_ies(fg, sub_faces, 0))
+                open_count += len(sub_faces)
+            if len(face.doors) != 0:
+                sub_faces = [dr.geometry for dr in face.doors]
+                openings.append(_opening_to_ies(fg, sub_faces, 1))
+                open_count += len(sub_faces)
+            open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
+            faces.append('%s%d%s' % (face_str, open_count, open_str))
 
     # remove new lines from the name
     room_name = ' '.join(room.display_name.split())
     space = SPACE_TEMPLATE.format(
         space_name=room_name, vertices_count=len(unique_vertices),
-        face_count=len(room.faces) - air_boundary_count,
+        face_count=face_count - air_boundary_count,
         vertices=vertices, faces='\n'.join(faces)
     )
 
