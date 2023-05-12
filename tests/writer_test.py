@@ -91,3 +91,16 @@ def test_shade_with_holes():
         '   7.000000    7.000000\n'
 
     assert hole_str in outf.read_text()
+
+
+def test_model_with_holes():
+    in_file = './tests/assets/model_with_holes.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True)
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(model, out_folder.as_posix(), name='model_with_holes')
+    assert outf.exists()
+
+    room_str = 'IES Room w holes\n28 18'
+
+    assert room_str in outf.read_text()
