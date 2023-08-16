@@ -279,7 +279,7 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
 
 
 def model_to_ies(
-    model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.01
+    model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.0
         ) -> pathlib.Path:
     """Export a honeybee model to an IES GEM file.
 
@@ -291,7 +291,7 @@ def model_to_ies(
         shade_thickness:The thickness of the shade face in meters. This value will be
             used to extrude shades with no group id. IES doesn't consider the effect of
             shades with no thickness in SunCalc. This function extrudes the geometry to
-            create a closed volume for the shade. Default: 0.01
+            create a closed volume for the shade. Default: 0.0
 
     Returns:
         Path to exported GEM file.
