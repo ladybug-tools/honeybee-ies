@@ -209,7 +209,8 @@ def _parse_gem_segment(segment: str):
                     holes_3d_snapped, tolerance=MODEL_TOLERANCE * 5, angle_tolerance=0.01
                 )
                 base_faces_holes = [[] for _ in base_faces]
-                for hole_geo in holes_3d_snapped:
+                holes_tracker = []
+                for hole_count, hole_geo in enumerate(holes_3d_snapped):
                     for count, base_face in enumerate(base_faces):
                         if not base_face.holes:
                             continue
@@ -218,8 +219,11 @@ def _parse_gem_segment(segment: str):
                             if hole_geo.center.distance_to_point(f_hole_geo.center) <= MODEL_TOLERANCE * 5:
                                 # this hole is inside the face
                                 base_faces_holes[count].append(f_hole_geo)
+                                holes_tracker.append(hole_count)
                                 break
                     else:
+                        if hole_count in holes_tracker:
+                            continue
                         # the hole is not inside any of the faces
                         hole_face = Face(
                             str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
