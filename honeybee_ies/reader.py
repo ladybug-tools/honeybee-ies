@@ -4,8 +4,8 @@ import re
 from typing import Iterator, List, Tuple
 import uuid
 
-from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D, Plane
-from ladybug_geometry.geometry2d import Polygon2D, Point2D, Vector2D, LineSegment2D
+from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D
+from ladybug_geometry.geometry2d import Polygon2D, Point2D, Vector2D
 from ladybug_geometry.geometry2d.polygon import closest_point2d_on_line2d
 from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
 from honeybee.boundarycondition import Outdoors, Ground
@@ -14,6 +14,7 @@ from honeybee.typing import clean_string, clean_and_id_ep_string
 PI = math.pi
 Z_AXIS = Vector3D(0, 0, 1)
 ROOF_ANGLE_TOLERANCE = math.radians(10)
+MODEL_TOLERANCE = 0.001
 
 
 def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D], int]:
@@ -43,14 +44,14 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
     # 0.000000     0.906100
     # 0.000000     0.000000
     # 10.373100     0.000000
-    tolerance = 0.001
+    tolerance = MODEL_TOLERANCE * 5
     boundary_2d: Polygon2D = geometry.boundary_polygon2d
     offset_boundary_2d = boundary_2d.offset(tolerance)
     origin_2d = geometry.plane.xyz_to_xy(origin)
 
     # create vertices in 2D
     opening_vertices = []
-
+    opening_vertices_2d = []
     for _ in range(ver_count):
         x_m, y_m = [float(v) for v in next(content).split()]
         vertex_2d = Point2D(origin_2d.x - x_m, origin_2d.y - y_m)
@@ -61,7 +62,8 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
             if vertex_2d.distance_to_point(close_pt) <= tolerance:
                 on_segments.append((segment, close_pt))
 
-        if not on_segments:
+        if not on_segments or opening_type == 2:
+            # for holes don't move the vertex
             pass
         elif len(on_segments) == 1:
             # it is an edge
@@ -91,8 +93,12 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
 
         vertex = geometry.plane.xy_to_xyz(vertex_2d)
         opening_vertices.append(vertex)
+        opening_vertices_2d.append(vertex_2d)
 
-    return opening_vertices, opening_type
+    org_pl = Polygon2D(opening_vertices_2d)
+    opening_area = org_pl.area
+
+    return opening_type, opening_vertices, opening_vertices_2d, opening_area
 
 
 def _parse_gem_segment(segment: str):
@@ -123,11 +129,16 @@ def _parse_gem_segment(segment: str):
         apertures = []
         doors = []
         holes = []
+        holes_2d = []
         boundary = [vertices[int(i) - 1] for i in next(content).split()[1:]]
         boundary_geometry = Face3D(boundary, enforce_right_hand=False)
+        boundary_geometry_polygon2d = boundary_geometry.boundary_polygon2d
+        boundary_area = boundary_geometry.area
+        holes_area = 0
         opening_count = int(next(content))
         for _ in range(opening_count):
-            opening_vertices, opening_type = _opening_from_ies(boundary_geometry, content)
+            opening_type, opening_vertices, opening_vertices_2d, opening_area = \
+                _opening_from_ies(boundary_geometry, content)
             if opening_type == 0:
                 # create an aperture
                 aperture_geo = Face3D(opening_vertices)
@@ -140,12 +151,15 @@ def _parse_gem_segment(segment: str):
                 doors.append(door)
             elif opening_type == 2:
                 # create a hole
+                holes_area += opening_area
                 holes.append(opening_vertices)
+                holes_2d.append(Polygon2D(opening_vertices_2d))
             else:
                 raise ValueError(f'Unsupported opening type: {opening_type}')
 
         if type_ == 1:
-            geometry = Face3D(boundary, holes=holes)
+            # A model face
+            geometry = Face3D(boundary)
             face = Face(str(uuid.uuid4()), geometry=geometry)
             if apertures or doors:
                 # change the boundary condition if it is set to ground
@@ -159,13 +173,76 @@ def _parse_gem_segment(segment: str):
             face.add_doors(doors)
             if holes:
                 # add an AirBoundary to cover the hole
-                for hole in holes:
-                    hole_geo = Face3D(hole)
+                if holes_area >= 0.98 * boundary_area:
+                    # the face is mostly created from holes
+                    # replace the parent face with an face from type AirBoundary
+                    if len(holes) == 1:
+                        # the entire face is created from holes
+                        face.type = AirBoundary()
+                        faces.append(face)
+                        continue
+                    # there are multiple air boundaries. create an AirBoundary for each. 
+                    for hole in holes_2d: 
+                        hole = boundary_geometry_polygon2d.snap_to_polygon(hole, MODEL_TOLERANCE * 5)
+                        # map the hole back to 3D
+                        hole = [boundary_geometry.plane.xy_to_xyz(ver) for ver in hole]
+                        hole_geo = Face3D(hole)
+                        hole_face = Face(
+                            str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
+                        )
+                        faces.append(hole_face)
+                    continue
+
+                # only part of the face is created from holes.
+                # 1. try to snap them to the face
+                # 2. separate holes from side air boundaris
+                holes_2d_snapped = [
+                    boundary_geometry_polygon2d.snap_to_polygon(hole, MODEL_TOLERANCE * 5)
+                    for hole in holes_2d
+                ]
+                holes_3d_snapped = [
+                    Face3D([boundary_geometry.plane.xy_to_xyz(v) for v in hole])
+                    for hole in holes_2d_snapped
+                ]
+                #
+                base_faces = boundary_geometry.coplanar_difference(
+                    holes_3d_snapped, tolerance=MODEL_TOLERANCE * 5, angle_tolerance=0.01
+                )
+                base_faces_holes = [[] for _ in base_faces]
+                for hole_geo in holes_3d_snapped:
+                    for count, base_face in enumerate(base_faces):
+                        if not base_face.holes:
+                            continue
+                        for f_hole in base_face.holes:
+                            f_hole_geo = Face3D(f_hole)
+                            if hole_geo.center.distance_to_point(f_hole_geo.center) <= MODEL_TOLERANCE * 5:
+                                # this hole is inside the face
+                                base_faces_holes[count].append(f_hole_geo)
+                                break
+                    else:
+                        # the hole is not inside any of the faces
+                        hole_face = Face(
+                            str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
+                        )
+                        faces.append(hole_face)
+                
+                # create holes
+                holes_flattened = [h for holes in base_faces_holes for h in holes]
+                for hole_geo in holes_flattened:
                     hole_face = Face(
                         str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
                     )
+                    # add a key to user data to skip the face when translating
+                    # back from HBJSON to GEM
                     hole_face.user_data = {'__ies_import__': True}
                     faces.append(hole_face)
+
+                # add base faces
+                for base_face in base_faces:
+                    face = Face(str(uuid.uuid4()), geometry=base_face)
+                    faces.append(face)
+                continue
+
         elif type_ == 4 or type_ == 2:
             # local and context shades
             # 4 is for local shades attached to the building and 2 is for neighbor
