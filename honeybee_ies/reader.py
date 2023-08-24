@@ -287,7 +287,7 @@ def model_from_ies(gem: str) -> Model:
 
     model = Model(
         clean_string(gem_file.stem), rooms=rooms, units='Meters', orphaned_shades=shades,
-        tolerance=MODEL_TOLERANCE
+        tolerance=0.0001
     )
     model.display_name = gem_file.stem
     return model
