@@ -108,9 +108,9 @@ def _parse_gem_segment(segment: str):
     """
     info, segments = re.split('\nIES ', segment)
     type_ = int(re.findall(r'^TYPE\n(\d)', info, re.MULTILINE)[0])
-    assert type_ in (1, 2, 4), \
-        f'Only types 1, 2 and 4 for rooms and shades are valid. Invalid type: {type_}.' \
-        'Contact the developers for adding support for a new type'
+    assert type_ in (1, 2, 3, 4), \
+        f'Only types 1, 2, 3 and 4 for rooms and shades are valid. Invalid type: {type_}. ' \
+        'Contact the developers with your sample file for adding support for a new type.'
 
     # remove empty lines if any
     content = iter(l for l in segments.split('\n') if l.strip())
@@ -247,11 +247,11 @@ def _parse_gem_segment(segment: str):
                     faces.append(face)
                 continue
 
-        elif type_ == 4 or type_ == 2:
-            # local and context shades
+        elif 2 <= type_ <= 4:
+            # local, context or topography shades
             # 4 is for local shades attached to the building and 2 is for neighbor
-            # buildings
-            is_detached = True if type_ == 2 else False
+            # buildings. 3 if for topography
+            is_detached = True if type_ != 4 else False
             geometry = Face3D(boundary, holes=holes)
             face = Shade(str(uuid.uuid4()), geometry=geometry, is_detached=is_detached)
             # use group id to group the shades together.
