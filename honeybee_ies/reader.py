@@ -1,7 +1,8 @@
+import enum
 import math
 import pathlib
 import re
-from typing import Iterator, List, Tuple
+from typing import Iterator, List, Tuple, Union, Dict
 import uuid
 
 from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D
@@ -15,6 +16,109 @@ PI = math.pi
 Z_AXIS = Vector3D(0, 0, 1)
 ROOF_ANGLE_TOLERANCE = math.radians(10)
 MODEL_TOLERANCE = 0.001
+
+
+class GEM_TYPES(enum.Enum):
+    """Enumeration for different object types in GEM.
+
+    There is no public documentation for GEM files but here is our understanding based
+    on the sample files.
+
+    --------------------------------------------------------
+    |     object     | CATEGORY | TYPE | SUBTYPE | KEYWORD |
+    --------------------------------------------------------
+    |  Rooms/Spaces  |    1     |  1   |   2001  |   IES   |
+    |  UnCond Space  |    1     |  1   |   2002  |   IES   |
+    |  Trans Shades  |    1     |  1   |   2102  |   IES   |
+    |   Nghbr Bldg   |    1     |  2   |    0    |   IES   |
+    |       PV       |    3     | 202  |    0    |   PVP   |
+    |      Tree      |    1     |  3   |    0    |   LAN   |
+    |   Topography   |    1     |  3   |    0    |   IES   |
+    |  Local Shades  |    1     |  4   |    0    |   IES   |
+    """
+    Space = '1-001-2001-IES'
+    TranslucentShade = '1-001-2102-IES'
+    ContextBuilding = '1-002-0000-IES'
+    PV = '3-202-0000-PVP'
+    Tree = '1-003-0000-LAN'
+    Topography = '1-003-0000-IES'
+    Shade = '1-004-0000-IES'
+
+    @classmethod
+    def from_info(cls, category, type_, sub_type, keyword):
+        if category == 1 and sub_type == 2001 and type_ == 1 and keyword == 'IES':
+            return cls.Space
+        if category == 1 and sub_type == 2002 and type_ == 1 and keyword == 'IES':
+            # uncondition space
+            return cls.Space
+        elif category == 1 and sub_type == 2102 and type_ == 1 and keyword == 'IES':
+            return cls.TranslucentShade
+        elif category == 1 and sub_type == 0 and type_ == 2 and keyword == 'IES':
+            return cls.ContextBuilding
+        elif category == 3 and sub_type == 0 and type_ == 202 and keyword == 'PVP':
+            return cls.PV
+        elif category == 1 and sub_type == 0 and type_ == 3 and keyword == 'IES':
+            return cls.Topography
+        elif category == 1 and sub_type == 0 and type_ == 3 and keyword == 'LAN':
+            return cls.Tree
+        elif category == 1 and sub_type == 0 and type_ == 4 and keyword == 'IES':
+            return cls.Shade
+        else:
+            raise ValueError(
+                'Unknown combination of inputs in the input GEM file. Reach out to '
+                'us with a copy of the GEM file and the information below:\n'
+                f'{category}-{type_}-{sub_type}-{keyword}'
+            )
+
+    def _get_numeric_values(self, index):
+        return int(self.value.split('-')[index])
+
+    def category(self):
+        return self._get_numeric_values(0)
+
+    def type(self):
+        return self._get_numeric_values(1)
+
+    def sub_type(self):
+        return self._get_numeric_values(2)
+
+    def keyword(self):
+        return self.value.split('-')[-1]
+
+
+def _gem_object_type(info: str, keyword: str = 'IES') -> GEM_TYPES:
+    """Get GEM object type from info."""
+
+    type_ = int(re.findall(r'^TYPE\n(\d*)', info, re.MULTILINE)[0])
+    sub_type = int(re.findall(r'^SUBTYPE\n(\d*)', info, re.MULTILINE)[0])
+    category = int(re.findall(r'^CATEGORY\n(\d*)', info, re.MULTILINE)[0])
+    return GEM_TYPES.from_info(
+        category=category, type_=type_, sub_type=sub_type, keyword=keyword
+    )
+
+
+def _add_user_date(face: Union[Face, Shade], user_data: Dict):
+    """Add user data to a face or a shade object."""
+    if not user_data:
+        return
+    if face.user_data:
+        # the dictionary exists
+        face.user_data.update(user_data)
+    else:
+        face.user_data = user_data
+
+
+def _create_shade(
+        boundary: List[Point3D], holes: List[Point3D] = None,
+        is_detached: bool = True, user_data: Dict = None):
+    """Create a Honeybee Shade object"""
+    geometry = Face3D(boundary, holes=holes)
+    face = Shade(
+        str(uuid.uuid4()), geometry=geometry,
+        is_detached=is_detached
+    )
+    _add_user_date(face, user_data)
+    return face
 
 
 def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D], int]:
@@ -53,7 +157,12 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
     opening_vertices = []
     opening_vertices_2d = []
     for _ in range(ver_count):
-        x_m, y_m = [float(v) for v in next(content).split()]
+        cnt = next(content).split()
+        if len(cnt) == 2:
+            x_m, y_m = [float(v) for v in cnt]
+        elif len(cnt) == 3:
+            # Translucent shade
+            x_m, y_m, opacity = [float(v) for v in cnt]
         vertex_2d = Point2D(origin_2d.x - x_m, origin_2d.y - y_m)
         vertex = geometry.plane.xy_to_xyz(vertex_2d)
         on_segments = []
@@ -106,11 +215,18 @@ def _parse_gem_segment(segment: str):
 
     Each segment has the information for a room or a shade object.
     """
-    info, segments = re.split('\nIES ', segment)
-    type_ = int(re.findall(r'^TYPE\n(\d)', info, re.MULTILINE)[0])
-    assert type_ in (1, 2, 3, 4), \
-        f'Only types 1, 2, 3 and 4 for rooms and shades are valid. Invalid type: {type_}. ' \
-        'Contact the developers with your sample file for adding support for a new type.'
+    for keyword in ['IES', 'LAN', 'PVP']:
+        if keyword in segment:
+            info, segments = re.split(f'\n{keyword} ', segment)
+            break
+    else:
+        raise ValueError(
+            'There is a segment with an unsupported type in the input GEM file. ' \
+            'Reach out to us with a copy of the GEM file and the information below:\n' \
+            f'{segment}'
+        )
+
+    gem_type = _gem_object_type(info=info, keyword=keyword)
 
     # remove empty lines if any
     content = iter(l for l in segments.split('\n') if l.strip())
@@ -157,7 +273,7 @@ def _parse_gem_segment(segment: str):
             else:
                 raise ValueError(f'Unsupported opening type: {opening_type}')
 
-        if type_ == 1:
+        if gem_type == GEM_TYPES.Space:
             # A model face
             geometry = Face3D(boundary)
             face = Face(str(uuid.uuid4()), geometry=geometry)
@@ -181,8 +297,8 @@ def _parse_gem_segment(segment: str):
                         face.type = AirBoundary()
                         faces.append(face)
                         continue
-                    # there are multiple air boundaries. create an AirBoundary for each. 
-                    for hole in holes_2d: 
+                    # there are multiple air boundaries. create an AirBoundary for each.
+                    for hole in holes_2d:
                         hole = boundary_geometry_polygon2d.snap_to_polygon(hole, MODEL_TOLERANCE * 5)
                         # map the hole back to 3D
                         hole = [boundary_geometry.plane.xy_to_xyz(ver) for ver in hole]
@@ -195,7 +311,7 @@ def _parse_gem_segment(segment: str):
 
                 # only part of the face is created from holes.
                 # 1. try to snap them to the face
-                # 2. separate holes from side air boundaris
+                # 2. separate holes from side air boundaries
                 holes_2d_snapped = [
                     boundary_geometry_polygon2d.snap_to_polygon(hole, MODEL_TOLERANCE * 5)
                     for hole in holes_2d
@@ -229,7 +345,7 @@ def _parse_gem_segment(segment: str):
                             str(uuid.uuid4()), geometry=hole_geo, type=AirBoundary()
                         )
                         faces.append(hole_face)
-                
+
                 # create holes
                 holes_flattened = [h for holes in base_faces_holes for h in holes]
                 for hole_geo in holes_flattened:
@@ -247,23 +363,35 @@ def _parse_gem_segment(segment: str):
                     faces.append(face)
                 continue
 
-        elif 2 <= type_ <= 4:
-            # local, context or topography shades
-            # 4 is for local shades attached to the building and 2 is for neighbor
-            # buildings. 3 if for topography
-            is_detached = True if type_ != 4 else False
-            geometry = Face3D(boundary, holes=holes)
-            face = Shade(str(uuid.uuid4()), geometry=geometry, is_detached=is_detached)
-            # use group id to group the shades together.
-            try:
-                face.user_data['__group_id__'] = cleaned_display_name
-            except TypeError:
-                face.user_data = {'__group_id__': cleaned_display_name}
+        elif gem_type in (GEM_TYPES.ContextBuilding, GEM_TYPES.Shade):
+            is_detached = True if isinstance(gem_type, GEM_TYPES.Shade) else False
+            face = _create_shade(boundary, holes, is_detached)
+        elif gem_type == GEM_TYPES.TranslucentShade:
+            # ignore the hole. GEM has a strange way of building translucent shades
+            face = _create_shade(
+                boundary=boundary, is_detached=False,
+                user_data={'__gem_type__': 'translucent_shade'}
+            )
+        elif gem_type == GEM_TYPES.PV:
+            # PV panels
+            continue
+        elif gem_type == GEM_TYPES.Topography:
+            # Topography
+            face = _create_shade(
+                boundary=boundary, holes=holes, is_detached=True,
+                user_data={'__gem_type__': 'topography'}
+            )
+        elif gem_type == GEM_TYPES.Tree:
+            continue
+
+        # use group id to group the shades together.
+        if gem_type != GEM_TYPES.Space:
+            _add_user_date(face=face, user_data={'__group_id__': cleaned_display_name})
             face.display_name = display_name
 
         faces.append(face)
 
-    if type_ == 1:
+    if gem_type == GEM_TYPES.Space:
         room = Room(identifier, faces=faces)
         room.display_name = display_name
         return room
