@@ -17,3 +17,15 @@ def test_translucent_shade():
     in_file = './tests/assets/translucent_shade.gem'
     model = model_from_ies(in_file)
     assert len(model.shades) == 1
+
+
+def test_tree():
+    in_file = './tests/assets/tree.gem'
+    model = model_from_ies(in_file)
+    assert len(model.shades) == 10
+
+
+def test_pv():
+    in_file = './tests/assets/pv.gem'
+    model = model_from_ies(in_file)
+    assert len(model.shades) == 1

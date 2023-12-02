@@ -5,7 +5,7 @@ import re
 from typing import Iterator, List, Tuple, Union, Dict
 import uuid
 
-from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D
+from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D, Plane
 from ladybug_geometry.geometry2d import Polygon2D, Point2D, Vector2D
 from ladybug_geometry.geometry2d.polygon import closest_point2d_on_line2d
 from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
@@ -88,7 +88,6 @@ class GEM_TYPES(enum.Enum):
 
 def _gem_object_type(info: str, keyword: str = 'IES') -> GEM_TYPES:
     """Get GEM object type from info."""
-
     type_ = int(re.findall(r'^TYPE\n(\d*)', info, re.MULTILINE)[0])
     sub_type = int(re.findall(r'^SUBTYPE\n(\d*)', info, re.MULTILINE)[0])
     category = int(re.findall(r'^CATEGORY\n(\d*)', info, re.MULTILINE)[0])
@@ -106,6 +105,17 @@ def _add_user_date(face: Union[Face, Shade], user_data: Dict):
         face.user_data.update(user_data)
     else:
         face.user_data = user_data
+
+
+def _update_name(face: Shade, display_name: str, count: int = None):
+    """Add group id and display name to non-room objects."""
+    identifier = \
+        clean_string(display_name) if count is None \
+        else clean_string(f'{display_name}-{count}')
+    _add_user_date(
+        face=face, user_data={'__group_id__': identifier}
+    )
+    face.display_name = display_name
 
 
 def _create_shade(
@@ -210,6 +220,73 @@ def _opening_from_ies(geometry: Face3D, content: Iterator) -> Tuple[List[Point3D
     return opening_type, opening_vertices, opening_vertices_2d, opening_area
 
 
+def _create_tree(info: str, tree_type=1) -> Shade:
+    """Create a Tree from an IES Tree."""
+    values = [float(v) for v in info.strip().split()]
+    assert len(values) == 8, 'Length of data for tree is not 8 segments.'
+    # calculate tree geometry
+    x, y, z, x_scale, y_scale, z_scale, xy_rotation, yz_rotation = values
+    x_scale *= 3
+    y_scale *= 3
+    z_scale *= 8
+    base = Point3D(x, y, z)
+    # move the base plane for half the x_scale
+    x_base = Plane(o=base, n=Vector3D(0, -1, 0), x=Vector3D(1, 0, 0))
+    x_base = x_base.move(Vector3D(-x_scale / 2, 0, 0))
+    y_base = Plane(o=base, n=Vector3D(1, 0, 0), x=Vector3D(0, 1, 0))
+    y_base = y_base.move(Vector3D(0, -y_scale / 2, 0))
+    geometries = [
+        Face3D.from_rectangle(x_scale, z_scale, x_base),
+        Face3D.from_rectangle(y_scale, z_scale, y_base)
+    ]
+    geos = []
+    for geometry in geometries:
+        if yz_rotation:
+            axis = Vector3D(-1, 0, 0)
+            geometry = geometry.rotate(axis, math.radians(yz_rotation), base)
+        if xy_rotation:
+            geometry = geometry.rotate_xy(math.radians(xy_rotation), base)
+        geos.append(geometry)
+
+    tree_0 = _create_shade(
+        geos[0].lower_left_counter_clockwise_vertices,
+        user_data={'__ies_type__': 'tree'}
+    )
+
+    tree_1 = _create_shade(
+        geos[1].lower_left_counter_clockwise_vertices,
+        user_data={
+            '__ies_type__': 'tree',
+            '__ies_tree_type__': tree_type
+        }
+    )
+
+    return tree_0, tree_1
+
+
+def _create_pv(info: str) -> Shade:
+    """Create a PV panel from GEM PV panel."""
+    values = [float(v) for v in info.strip().split()]
+    assert len(values) == 7, 'Length of data for PV is not 7 segments.'
+    # calculate PV geometry
+    x, y, z, width, height, xy_rotation, yz_rotation = values
+    base = Point3D(x, y, z)
+    base_plane = Plane(o=base)
+    geometry = Face3D.from_rectangle(width, -height, base_plane)
+    if yz_rotation:
+        axis = Vector3D(-1, 0, 0)
+        geometry = geometry.rotate(axis, math.radians(yz_rotation), base)
+    if xy_rotation:
+        geometry = geometry.rotate_xy(math.radians(xy_rotation), base)
+
+    pv = _create_shade(
+        geometry.lower_left_counter_clockwise_vertices,
+        user_data={'__ies_type__': 'pv'}
+    )
+
+    return pv
+
+
 def _parse_gem_segment(segment: str):
     """Parse a segment of the GEM file.
 
@@ -233,13 +310,30 @@ def _parse_gem_segment(segment: str):
     display_name = next(content)
     cleaned_display_name = clean_string(display_name)
     identifier = clean_and_id_ep_string(cleaned_display_name)
+    if gem_type == GEM_TYPES.PV:
+        pv_info = next(content)
+        face = _create_pv(pv_info)
+        _update_name(face, display_name)
+        return [face]
+    elif gem_type == GEM_TYPES.Tree:
+        tree_type = next(content)
+        assert tree_type.startswith('2D Tree'), \
+            f'{tree_type} is not currently supported.'
+        tree_type = int(tree_type.split()[-1])
+        tree_info = next(content)
+        faces = _create_tree(tree_info)
+        for count, face in enumerate(faces):
+            _update_name(face, display_name, count)
+        return faces
+
+    faces = []
+    # everything else
     ver_count, face_count = [int(v) for v in next(content).split()]
     vertices = [
         Point3D(*[float(v) for v in next(content).split()])
         for _ in range(ver_count)
     ]
 
-    faces = []
     # create faces
     for _ in range(face_count):
         apertures = []
@@ -366,28 +460,21 @@ def _parse_gem_segment(segment: str):
         elif gem_type in (GEM_TYPES.ContextBuilding, GEM_TYPES.Shade):
             is_detached = True if isinstance(gem_type, GEM_TYPES.Shade) else False
             face = _create_shade(boundary, holes, is_detached)
+            _update_name(face, display_name)
         elif gem_type == GEM_TYPES.TranslucentShade:
             # ignore the hole. GEM has a strange way of building translucent shades
             face = _create_shade(
                 boundary=boundary, is_detached=False,
                 user_data={'__gem_type__': 'translucent_shade'}
             )
-        elif gem_type == GEM_TYPES.PV:
-            # PV panels
-            continue
+            _update_name(face, display_name)
         elif gem_type == GEM_TYPES.Topography:
             # Topography
             face = _create_shade(
                 boundary=boundary, holes=holes, is_detached=True,
                 user_data={'__gem_type__': 'topography'}
             )
-        elif gem_type == GEM_TYPES.Tree:
-            continue
-
-        # use group id to group the shades together.
-        if gem_type != GEM_TYPES.Space:
-            _add_user_date(face=face, user_data={'__group_id__': cleaned_display_name})
-            face.display_name = display_name
+            _update_name(face, display_name)
 
         faces.append(face)
 
