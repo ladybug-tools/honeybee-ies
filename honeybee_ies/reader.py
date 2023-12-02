@@ -107,15 +107,35 @@ def _add_user_date(face: Union[Face, Shade], user_data: Dict):
         face.user_data = user_data
 
 
-def _update_name(face: Shade, display_name: str, count: int = None):
-    """Add group id and display name to non-room objects."""
-    identifier = \
-        clean_string(display_name) if count is None \
-        else clean_string(f'{display_name}-{count}')
-    _add_user_date(
-        face=face, user_data={'__group_id__': identifier}
-    )
-    face.display_name = display_name
+def _get_id(display_name):
+    """Extract the id from display name.
+
+    In version 2023 the ID is included in the GEM file as inside [] at the end of the
+    name.
+    """
+    id_ = re.findall(r'\s\[(.*)\]$', display_name, re.MULTILINE)
+    if id_:
+        return id_[0]
+    else:
+        return None
+
+
+def _update_name(obj: Union[Shade, Room], display_name: str, count: int = None):
+    """Add group id and display name to objects."""
+    if not isinstance(obj, Room):
+        identifier = \
+            clean_string(display_name) if count is None \
+            else clean_string(f'{display_name}-{count}')
+        _add_user_date(
+            face=obj, user_data={'__group_id__': identifier}
+        )
+
+    id_ = _get_id(display_name)
+    if id_:
+        obj.identifier = id_ if count is None else f'{id_}-{count}'
+        obj.display_name = display_name.replace(f' [{id_}]', '')
+    else:
+        obj.display_name = display_name
 
 
 def _create_shade(
@@ -480,7 +500,7 @@ def _parse_gem_segment(segment: str):
 
     if gem_type == GEM_TYPES.Space:
         room = Room(identifier, faces=faces)
-        room.display_name = display_name
+        _update_name(room, display_name)
         return room
     else:
         return faces
