@@ -1,11 +1,12 @@
 import pathlib
-from typing import List, Union
+import math
+from typing import List, Union, Dict
 
 from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
 from honeybee.model import Model, Shade, Room, AirBoundary, RoofCeiling, Floor
 
-from .templates import SPACE_TEMPLATE, SHADE_TEMPLATE, ADJ_BLDG_TEMPLATE
 from .reader import Z_AXIS, ROOF_ANGLE_TOLERANCE
+from .types import GEM_TYPES
 
 
 def _opening_to_ies(
@@ -48,18 +49,59 @@ def _vertices_to_ies(vertices: List[Point3D]) -> str:
 
 
 def _shade_geometry_to_ies(
-    geometry: Union[Face3D, Polyface3D], name: str, is_detached=True
+    geometry: Union[Face3D, Polyface3D], name: str, is_detached: bool = True,
+    identifier: str = None, user_data: Dict = None
         ):
 
     open_count = 0
     faces = []
+
+    gem_type = GEM_TYPES.from_user_data(user_data)
+    if not gem_type:
+        # it is a shade or a context building
+        gem_type = GEM_TYPES.ContextBuilding if is_detached \
+            else GEM_TYPES.Shade
+
+    if gem_type == GEM_TYPES.PV:
+        # calculate the bounds of the geometry based and translate it back to
+        # GEM format
+        w, h = geometry.boundary_polygon2d.max - geometry.boundary_polygon2d.min
+        base = geometry.lower_right_corner
+        yz_rotation = abs(90 - round(math.degrees(geometry.plane.altitude), 6))
+        xy_rotation = abs(360 - round(math.degrees(geometry.plane.azimuth), 6))
+        pv_info = f'{round(base.x, 4)} {round(base.y, 4)} {round(base.z, 4)} ' \
+            f'{round(w, 4)} {round(h, 4)} ' \
+            f'{round(xy_rotation, 4)} {round(yz_rotation, 4)}'
+        return gem_type.to_gem(
+                name=name, identifier=identifier, vertices=pv_info
+            )
+
+    if gem_type == GEM_TYPES.Tree:
+        # TODO: create objects for every IES object to remove duplicate values
+        # like the scales here
+        x_scale = 3
+        y_scale = 3
+        z_scale = 8
+        tree_type = user_data.get('__gem_tree_type__', 1)
+        w, h = geometry.boundary_polygon2d.max - geometry.boundary_polygon2d.min
+        base = (geometry.lower_right_corner + geometry.lower_left_corner) / 2
+        # this logic won't work for values larger than 180 but that's for later
+        xy_rotation = abs(90 - round(math.degrees(geometry.plane.azimuth), 6))
+        yz_rotation = round(math.degrees(geometry.plane.altitude), 6)
+        tree_info = f'2D Tree {tree_type}\n' \
+            f'{round(base.x, 4)} {round(base.y, 4)} {round(base.z, 4)} ' \
+            f'{round(w / x_scale, 4)} {round(w / y_scale, 4)} {round(h / z_scale, 4)} ' \
+            f'{round(xy_rotation, 4)} {round(yz_rotation, 4)}'
+        return gem_type.to_gem(
+                name=name, identifier=identifier, vertices=tree_info
+            )
 
     if isinstance(geometry, Polyface3D):
         unique_vertices = geometry.vertices
         vertices = _vertices_to_ies(unique_vertices)
         for face_i, face in zip(geometry.face_indices, geometry.faces):
             index = [str(v + 1) for v in face_i[0]]
-            face_str = '%d %s \n' % (len(index), ' '.join(index))
+            face_str = '%d %s\n' % (len(index), ' '.join(index))
             open_count, openings = 0, []
             if face.has_holes:
                 sub_faces = [Face3D(hole, face.plane) for hole in face.holes]
@@ -74,25 +116,23 @@ def _shade_geometry_to_ies(
         unique_vertices = geometry.lower_left_counter_clockwise_vertices
         vertices = _vertices_to_ies(unique_vertices)
         index = [str(v + 1) for v in range(len(unique_vertices))]
-        face_str = '%d %s \n' % (len(index), ' '.join(index))
+        face_str = '%d %s\n' % (len(index), ' '.join(index))
         open_count, openings = 0, []
         if geometry.has_holes:
-            sub_faces = [Face3D(hole, face.plane) for hole in face.holes]
-            openings.append(_opening_to_ies(face, sub_faces, 2))
+            sub_faces = [Face3D(hole, geometry.plane) for hole in geometry.holes]
+            openings.append(_opening_to_ies(geometry, sub_faces, 2))
             open_count += len(sub_faces)
         open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
         faces.append('%s%d%s' % (face_str, open_count, open_str))
         face_count = 1
-
-    template = ADJ_BLDG_TEMPLATE if is_detached else SHADE_TEMPLATE
 
     if len(unique_vertices) < 3:
         # a check for line-like mesh faces
         print('Invalid line-like shade object found and removed.')
         return ''
 
-    return template.format(
-        name=name,
+    return gem_type.to_gem(
+        name=name, identifier=identifier,
         vertices_count=len(unique_vertices),
         vertices=vertices,
         faces='\n'.join(faces),
@@ -113,7 +153,8 @@ def _shade_group_to_ies(shades: List[Shade]) -> str:
     # remove new lines from the name
     shade_name = ' '.join(first_shade.display_name.split())
     return _shade_geometry_to_ies(
-        group_geometry, shade_name, first_shade.is_detached
+        group_geometry, shade_name, first_shade.is_detached,
+        first_shade.identifier, first_shade.user_data
     )
 
 
@@ -142,7 +183,8 @@ def _shade_to_ies(shade: Shade, thickness: float = 0.01) -> str:
     # remove new lines from the name
     shade_name = ' '.join(shade.display_name.split())
     return _shade_geometry_to_ies(
-        shade_geo, shade_name, is_detached=shade.is_detached
+        shade_geo, shade_name, is_detached=shade.is_detached,
+        identifier=shade.identifier, user_data=shade.user_data
     )
 
 
@@ -163,6 +205,11 @@ def shades_to_ies(shades: List[Shade], thickness: float = 0.01) -> str:
     shade_groups = {}
     no_groups = []
     for shade in shades:
+        user_data = shade.user_data
+        if user_data and '__ies_import__' in user_data \
+                and user_data['__ies_import__']:
+            # ignore the shade face with __ies_import__ key
+            continue
         try:
             group_id = shade.user_data['__group_id__']
         except (TypeError, KeyError):
@@ -173,6 +220,11 @@ def shades_to_ies(shades: List[Shade], thickness: float = 0.01) -> str:
                 shade_groups[group_id] = [shade]
             else:
                 shade_groups[group_id].append(shade)
+
+    single_keys = [key for key, value in shade_groups.items() if len(value) == 1]
+    for key in single_keys:
+        v = shade_groups.pop(key)
+        no_groups.append(v[0])
 
     single_shades = '\n'.join([_shade_to_ies(shade, thickness) for shade in no_groups])
     group_shades = '\n'.join(
@@ -232,7 +284,7 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
             indexes = [[str(v + 1) for v in face_i[0]]]
 
         for index, fg in zip(indexes, fgs):
-            face_str = '%d %s \n' % (len(index), ' '.join(index))
+            face_str = '%d %s\n' % (len(index), ' '.join(index))
             open_count, openings = 0, []
             if isinstance(face.type, AirBoundary):
                 # add the face itself as the hole
@@ -256,8 +308,9 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
 
     # remove new lines from the name
     room_name = ' '.join(room.display_name.split())
-    space = SPACE_TEMPLATE.format(
-        space_name=room_name, vertices_count=len(unique_vertices),
+    space = GEM_TYPES.Space.to_gem(
+        name=room_name, identifier=room.identifier,
+        vertices_count=len(unique_vertices),
         face_count=face_count - air_boundary_count,
         vertices=vertices, faces='\n'.join(faces)
     )
