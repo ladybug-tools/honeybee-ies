@@ -1,4 +1,3 @@
-import enum
 import math
 import pathlib
 import re
@@ -12,87 +11,22 @@ from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
 from honeybee.boundarycondition import Outdoors, Ground
 from honeybee.typing import clean_string, clean_and_id_ep_string
 
+from .types import GEM_TYPES
+
+
 PI = math.pi
 Z_AXIS = Vector3D(0, 0, 1)
 ROOF_ANGLE_TOLERANCE = math.radians(10)
 MODEL_TOLERANCE = 0.001
 
 
-class GEM_TYPES(enum.Enum):
-    """Enumeration for different object types in GEM.
-
-    There is no public documentation for GEM files but here is our understanding based
-    on the sample files.
-
-    --------------------------------------------------------
-    |     object     | CATEGORY | TYPE | SUBTYPE | KEYWORD |
-    --------------------------------------------------------
-    |  Rooms/Spaces  |    1     |  1   |   2001  |   IES   |
-    |  UnCond Space  |    1     |  1   |   2002  |   IES   |
-    |  Trans Shades  |    1     |  1   |   2102  |   IES   |
-    |   Nghbr Bldg   |    1     |  2   |    0    |   IES   |
-    |       PV       |    3     | 202  |    0    |   PVP   |
-    |      Tree      |    1     |  3   |    0    |   LAN   |
-    |   Topography   |    1     |  3   |    0    |   IES   |
-    |  Local Shades  |    1     |  4   |    0    |   IES   |
-    """
-    Space = '1-001-2001-IES'
-    TranslucentShade = '1-001-2102-IES'
-    ContextBuilding = '1-002-0000-IES'
-    PV = '3-202-0000-PVP'
-    Tree = '1-003-0000-LAN'
-    Topography = '1-003-0000-IES'
-    Shade = '1-004-0000-IES'
-
-    @classmethod
-    def from_info(cls, category, type_, sub_type, keyword):
-        if category == 1 and sub_type == 2001 and type_ == 1 and keyword == 'IES':
-            return cls.Space
-        if category == 1 and sub_type == 2002 and type_ == 1 and keyword == 'IES':
-            # uncondition space
-            return cls.Space
-        elif category == 1 and sub_type == 2102 and type_ == 1 and keyword == 'IES':
-            return cls.TranslucentShade
-        elif category == 1 and sub_type == 0 and type_ == 2 and keyword == 'IES':
-            return cls.ContextBuilding
-        elif category == 3 and sub_type == 0 and type_ == 202 and keyword == 'PVP':
-            return cls.PV
-        elif category == 1 and sub_type == 0 and type_ == 3 and keyword == 'IES':
-            return cls.Topography
-        elif category == 1 and sub_type == 0 and type_ == 3 and keyword == 'LAN':
-            return cls.Tree
-        elif category == 1 and sub_type == 0 and type_ == 4 and keyword == 'IES':
-            return cls.Shade
-        else:
-            raise ValueError(
-                'Unknown combination of inputs in the input GEM file. Reach out to '
-                'us with a copy of the GEM file and the information below:\n'
-                f'{category}-{type_}-{sub_type}-{keyword}'
-            )
-
-    def _get_numeric_values(self, index):
-        return int(self.value.split('-')[index])
-
-    def category(self):
-        return self._get_numeric_values(0)
-
-    def type(self):
-        return self._get_numeric_values(1)
-
-    def sub_type(self):
-        return self._get_numeric_values(2)
-
-    def keyword(self):
-        return self.value.split('-')[-1]
-
-
 def _gem_object_type(info: str, keyword: str = 'IES') -> GEM_TYPES:
     """Get GEM object type from info."""
     type_ = int(re.findall(r'^TYPE\n(\d*)', info, re.MULTILINE)[0])
-    sub_type = int(re.findall(r'^SUBTYPE\n(\d*)', info, re.MULTILINE)[0])
+    subtype = int(re.findall(r'^SUBTYPE\n(\d*)', info, re.MULTILINE)[0])
     category = int(re.findall(r'^CATEGORY\n(\d*)', info, re.MULTILINE)[0])
     return GEM_TYPES.from_info(
-        category=category, type_=type_, sub_type=sub_type, keyword=keyword
+        category=category, type_=type_, subtype=subtype, keyword=keyword
     )
 
 
@@ -124,7 +58,7 @@ def _update_name(obj: Union[Shade, Room], display_name: str, count: int = None):
     """Add group id and display name to objects."""
     if not isinstance(obj, Room):
         identifier = \
-            clean_string(display_name) if count is None \
+            clean_string(display_name) if count \
             else clean_string(f'{display_name}-{count}')
         _add_user_date(
             face=obj, user_data={'__group_id__': identifier}
@@ -132,7 +66,7 @@ def _update_name(obj: Union[Shade, Room], display_name: str, count: int = None):
 
     id_ = _get_id(display_name)
     if id_:
-        obj.identifier = id_ if count is None else f'{id_}-{count}'
+        obj.identifier = id_ if count else f'{id_}'
         obj.display_name = display_name.replace(f' [{id_}]', '')
     else:
         obj.display_name = display_name
@@ -270,14 +204,18 @@ def _create_tree(info: str, tree_type=1) -> Shade:
 
     tree_0 = _create_shade(
         geos[0].lower_left_counter_clockwise_vertices,
-        user_data={'__ies_type__': 'tree'}
+        user_data={
+            '__gem_type__': 'tree',
+            '__gem_tree_type__': tree_type,
+            '__ies_import__': True
+        }
     )
 
     tree_1 = _create_shade(
         geos[1].lower_left_counter_clockwise_vertices,
         user_data={
-            '__ies_type__': 'tree',
-            '__ies_tree_type__': tree_type
+            '__gem_type__': 'tree',
+            '__gem_tree_type__': tree_type
         }
     )
 
@@ -301,7 +239,7 @@ def _create_pv(info: str) -> Shade:
 
     pv = _create_shade(
         geometry.lower_left_counter_clockwise_vertices,
-        user_data={'__ies_type__': 'pv'}
+        user_data={'__gem_type__': 'pv'}
     )
 
     return pv
@@ -341,7 +279,7 @@ def _parse_gem_segment(segment: str):
             f'{tree_type} is not currently supported.'
         tree_type = int(tree_type.split()[-1])
         tree_info = next(content)
-        faces = _create_tree(tree_info)
+        faces = _create_tree(tree_info, tree_type=tree_type)
         for count, face in enumerate(faces):
             _update_name(face, display_name, count)
         return faces
