@@ -66,7 +66,7 @@ def _update_name(obj: Union[Shade, Room], display_name: str, count: int = None):
 
     id_ = _get_id(display_name)
     if id_:
-        obj.identifier = id_ if count else f'{id_}'
+        obj.identifier = f'{id_}-{count}' if count else id_
         obj.display_name = display_name.replace(f' [{id_}]', '')
     else:
         obj.display_name = display_name
