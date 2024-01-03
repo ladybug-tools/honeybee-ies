@@ -4,8 +4,11 @@
 
 # honeybee-ies
 
-Honeybee extension for export a HBJSON file to IES-VE GEM file format
+Honeybee extension for exporting an HBJSON file to IES-VE GEM file format and vice versa.
 
+![image(52)](https://github.com/ladybug-tools/honeybee-ies/assets/2915573/d57be713-0cef-41ef-b365-7611ebc704f6)
+
+<img width="958" alt="image(53)" src="https://github.com/ladybug-tools/honeybee-ies/assets/2915573/34ad782b-f177-4b11-8fc4-84d7bc9c34aa">
 
 ![image](https://user-images.githubusercontent.com/2915573/145484209-ca484536-2d86-4f3f-9113-f4c998aa304f.png)
 
