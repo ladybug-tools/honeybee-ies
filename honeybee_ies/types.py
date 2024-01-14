@@ -19,6 +19,7 @@ class GEM_TYPES(enum.Enum):
     |      Tree      |    1     |  3   |    0    |  65   |   0   | 2399294  |   LAN   |
     |   Topography   |    1     |  3   |    0    |  63   |   0   |  38400   |   IES   |
     |  Local Shades  |    1     |  4   |    0    |  64   |  62   |  65280   |   IES   |
+    |  Local Shades  |    1     |  4   |   2101  |  66   |   1   |  65280   |   IES   |
     """
     # '{CATEGORY}-{TYPE}-{SUBTYPE}-{LAYER}-{COLOR}-{COLORRGB}-{KEYWORD}'
     Space = '1-001-2001-01-00-16711680-IES'
@@ -28,6 +29,7 @@ class GEM_TYPES(enum.Enum):
     Tree = '1-003-0000-65-00-2399294-LAN'
     Topography = '1-003-0000-63-00-38400-IES'
     Shade = '1-004-0000-64-62-65280-IES'
+    Shade_2 = '1-004-2101-66-01-65280-IES'  #  shade in VE 2023
 
     @classmethod
     def from_info(cls, category: str, type_: int, subtype: int, keyword: str):
@@ -48,12 +50,15 @@ class GEM_TYPES(enum.Enum):
             return cls.Tree
         elif category == 1 and subtype == 0 and type_ == 4 and keyword == 'IES':
             return cls.Shade
+        elif category == 1 and subtype == 2101 and type_ == 4 and keyword == 'IES':
+            return cls.ExternalShade
         else:
-            raise ValueError(
+            print(
                 'Unknown combination of inputs in the input GEM file. Reach out to '
                 'us with a copy of the GEM file and the information below:\n'
                 f'{category}-{type_}-{subtype}-{keyword}'
             )
+            return cls.Shade
 
     @classmethod
     def from_user_data(cls, user_data: Dict):
