@@ -376,6 +376,9 @@ def _parse_gem_segment(segment: str):
                 base_faces = boundary_geometry.coplanar_difference(
                     holes_3d_snapped, tolerance=MODEL_TOLERANCE * 5, angle_tolerance=0.01
                 )
+                if isinstance(base_faces, Face3D):
+                    # change the base face to a list if the difference is a single face
+                    base_faces = [base_faces]
                 base_faces_holes = [[] for _ in base_faces]
                 holes_tracker = []
                 for hole_count, hole_geo in enumerate(holes_3d_snapped):
