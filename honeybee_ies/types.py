@@ -51,7 +51,7 @@ class GEM_TYPES(enum.Enum):
         elif category == 1 and subtype == 0 and type_ == 4 and keyword == 'IES':
             return cls.Shade
         elif category == 1 and subtype == 2101 and type_ == 4 and keyword == 'IES':
-            return cls.ExternalShade
+            return cls.Shade_2
         else:
             print(
                 'Unknown combination of inputs in the input GEM file. Reach out to '
