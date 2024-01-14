@@ -418,8 +418,9 @@ def _parse_gem_segment(segment: str):
                     faces.append(face)
                 continue
 
-        elif gem_type in (GEM_TYPES.ContextBuilding, GEM_TYPES.Shade):
-            is_detached = True if isinstance(gem_type, GEM_TYPES.Shade) else False
+        elif gem_type in (
+                GEM_TYPES.ContextBuilding, GEM_TYPES.Shade, GEM_TYPES.Shade_2):
+            is_detached = True if gem_type == GEM_TYPES.ContextBuilding else False
             face = _create_shade(boundary, holes, is_detached)
             _update_name(face, display_name)
         elif gem_type == GEM_TYPES.TranslucentShade:
