@@ -1,3 +1,5 @@
+import re
+import json
 import pathlib
 import math
 from typing import List, Union, Dict
@@ -8,6 +10,51 @@ from honeybee.model import Model, Shade, Room, AirBoundary, \
 
 from .reader import Z_AXIS, ROOF_ANGLE_TOLERANCE
 from .types import GEM_TYPES
+
+
+def _gen_ve_id(display_name: str) -> str:
+    """Generate the VE identifier based on the name of the room.
+
+    VE takes the first two alphanumerical values except for vowels from the display name.
+    Then it adds an integer. For instance Room will be translated to RM000000. 1st floor
+    will be translated to 1S000000. If there is already another room with the same 2
+    characters then it adds to the number. RM000001, RM000002, and so on.
+
+    This method only returns the 2 characters.
+    """
+    # Match any vowel character (case-insensitive), any whitespace, or any \
+    # non-alphanumeric character
+    pattern = r"[aeiouAEIOU\s\W]+"
+    # Replace matched characters with an empty string
+    identifier = re.sub(pattern, '', display_name).upper()
+    if len(identifier) < 2:
+        raise ValueError(
+            f'Invalid display name: {display_name}. The display name should at '
+            'least have two characters after removing the vowels.'
+        )
+    return identifier[:2]
+
+
+def _convert_room_ids(model: Model) -> Dict:
+    """Convert room identifiers to a valid VE identifier.
+
+    This method updates the model directly, and returns a dictionary that maps the
+    original identifier to the new VE identifier. The mapper is useful to find the
+    rooms by ID from inside IES VE python editor.
+    """
+    id_mapper = {}
+    id_counter = {}
+    for room in model.rooms:
+        room: Room
+        identifier = room.identifier
+        ve_identifier = _gen_ve_id(room.display_name)
+        if ve_identifier not in id_counter:
+            id_counter[ve_identifier] = -1
+        id_counter[ve_identifier] += 1
+        full_ve_id = f'{ve_identifier}{id_counter[ve_identifier]:06d}'
+        id_mapper[identifier] = full_ve_id
+        room.identifier = full_ve_id
+    return id_mapper
 
 
 def _opening_to_ies(
@@ -362,7 +409,8 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
 
 
 def model_to_ies(
-    model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.0
+    model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.0,
+    write_id_mapper=True
         ) -> pathlib.Path:
     """Export a honeybee model to an IES GEM file.
 
@@ -375,12 +423,18 @@ def model_to_ies(
             used to extrude shades with no group id. IES doesn't consider the effect of
             shades with no thickness in SunCalc. This function extrudes the geometry to
             create a closed volume for the shade. Default: 0.0
+        write_id_mapper: A boolean to indicate if the id mapper file should be written
+            next to the gem file. It is a JSON file that maps the original identifier
+            of the rooms in the honeybee model to the new identifier in GEM file.
 
     Returns:
         Path to exported GEM file.
     """
     # ensure model is in metrics
+    model = model.duplicate()
     model.convert_to_units(units='Meters')
+
+    id_mapper = _convert_room_ids(model)
 
     header = 'COM GEM data file exported by Pollination\n' \
         'ANT\n'
@@ -403,4 +457,8 @@ def model_to_ies(
         outf.write(context_shades)
         outf.write(mesh_shades)
 
+    if write_id_mapper:
+        mapper_name = f'{name[:-4]}.im.json'
+        out_file = out_folder.joinpath(mapper_name)
+        out_file.write_text(json.dumps(id_mapper))
     return out_file
