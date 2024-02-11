@@ -332,6 +332,9 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
         else:
             raise ValueError(f'Failed to find {vertex} in the vertices.')
 
+    # remove new lines from the name
+    room.display_name = ' '.join(room.display_name.split())
+
     unique_vertices = room.geometry.vertices
     vertices = _vertices_to_ies(unique_vertices)
     face_count = len(room.faces)
@@ -348,14 +351,26 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
         if isinstance(face.type, (RoofCeiling, Floor)) and face.geometry.has_holes:
             # IES doesn't like rooms with holes in them. We need to break the face
             # into smaller faces
-            fgs = face.geometry.split_through_holes()
-            face_count += len(fgs) - 1
-            indexes = [
-                [
-                    _find_index(v, unique_vertices)
-                    for v in fg.lower_left_counter_clockwise_vertices
-                ] for fg in fgs
-            ]
+            try:
+                fgs = face.geometry.split_through_holes()
+            except AssertionError as e:
+                if 'There must be at least 3 vertices for a Polygon2D' not in str(e):
+                    raise AssertionError(e)
+                # ignore the hole
+                print(
+                    f'Failed to resolve the holes for {room.display_name}. Check the '
+                    'input model to ensure the holes are not outside the parent face.'
+                )
+                fgs = [face.geometry]
+                indexes = [[str(v + 1) for v in face_i[0]]]
+            else:
+                face_count += len(fgs) - 1
+                indexes = [
+                    [
+                        _find_index(v, unique_vertices)
+                        for v in fg.lower_left_counter_clockwise_vertices
+                    ] for fg in fgs
+                ]
         else:
             fgs = [face.geometry]
             indexes = [[str(v + 1) for v in face_i[0]]]
@@ -383,10 +398,8 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
             open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
             faces.append('%s%d%s' % (face_str, open_count, open_str))
 
-    # remove new lines from the name
-    room_name = ' '.join(room.display_name.split())
     space = GEM_TYPES.Space.to_gem(
-        name=room_name, identifier=room.identifier,
+        name=room.display_name, identifier=room.identifier,
         vertices_count=len(unique_vertices),
         face_count=face_count - air_boundary_count,
         vertices=vertices, faces='\n'.join(faces)
