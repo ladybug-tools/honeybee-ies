@@ -4,7 +4,7 @@
 
 # honeybee-ies
 
-Honeybee extension for exporting an HBJSON file to IES-VE GEM file format and vice versa.
+Honeybee extension for translating an HBJSON file to IES-VE GEM file format and vice versa.
 
 ## Sydney Opera House
 
