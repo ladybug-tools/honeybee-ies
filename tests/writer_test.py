@@ -45,7 +45,7 @@ def test_display_name_clean_up():
     model = Model.from_hbjson(in_file)
     outf = model_to_ies(model, out_folder.as_posix(), name='multiline_name_test')
     assert outf.exists()
-    ab_str = 'IES first line second line [Room_e4045601-6b1a-4743-8005-b9a92ab9b2bf-0052a4a3]\n'
+    ab_str = 'IES first line second line [FR000000]\n'
 
     assert ab_str in outf.read_text()
 
@@ -101,7 +101,7 @@ def test_model_with_holes():
     outf = model_to_ies(model, out_folder.as_posix(), name='model_with_holes')
     assert outf.exists()
 
-    room_str = 'IES Room w holes [Room_272c2977]\n28 18'
+    room_str = 'IES Room w holes [RM000001]\n28 18'
 
     assert room_str in outf.read_text()
 
