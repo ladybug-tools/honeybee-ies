@@ -472,6 +472,7 @@ def model_to_ies(
 
     if write_id_mapper:
         mapper_name = f'{name[:-4]}.im.json'
-        out_file = out_folder.joinpath(mapper_name)
-        out_file.write_text(json.dumps(id_mapper))
+        mapper_out_file = out_folder.joinpath(mapper_name)
+        mapper_out_file.write_text(json.dumps(id_mapper))
+
     return out_file
