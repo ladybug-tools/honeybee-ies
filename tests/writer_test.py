@@ -194,3 +194,18 @@ def test_model_with_translucent_shade():
         '   9.175500    3.007600    8.540000'
 
     assert topo_str in outf.read_text()
+
+
+def test_model_with_shade_mesh():
+    in_file = './tests/assets/shade_mesh_example.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True)
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(model, out_folder.as_posix(), name='shades_mesh')
+    assert outf.exists()
+
+    content = outf.read_text()
+    assert 'IES Tree_1' in content
+    assert 'IES Tree_2' in content
+    assert 'IES Tree_3' in content
+    assert '182 200' in content

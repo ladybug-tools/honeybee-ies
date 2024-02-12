@@ -3,7 +3,8 @@ import math
 from typing import List, Union, Dict
 
 from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
-from honeybee.model import Model, Shade, Room, AirBoundary, RoofCeiling, Floor
+from honeybee.model import Model, Shade, Room, AirBoundary, \
+    RoofCeiling, Floor, ShadeMesh
 
 from .reader import Z_AXIS, ROOF_ANGLE_TOLERANCE
 from .types import GEM_TYPES
@@ -49,8 +50,9 @@ def _vertices_to_ies(vertices: List[Point3D]) -> str:
 
 
 def _shade_geometry_to_ies(
-    geometry: Union[Face3D, Polyface3D], name: str, is_detached: bool = True,
-    identifier: str = None, user_data: Dict = None
+    geometry: Union[Face3D, Polyface3D, ShadeMesh], name: str,
+    is_detached: bool = True, identifier: str = None,
+    user_data: Dict = None
         ):
 
     open_count = 0
@@ -110,6 +112,15 @@ def _shade_geometry_to_ies(
 
             open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
             faces.append('%s%d%s' % (face_str, open_count, open_str))
+        face_count = len(geometry.faces)
+    elif isinstance(geometry, ShadeMesh):
+        # ShadeMesh
+        unique_vertices = geometry.vertices
+        vertices = _vertices_to_ies(unique_vertices)
+        for face in geometry.faces:
+            index = [str(v + 1) for v in face]
+            face_str = '%d %s\n' % (len(index), ' '.join(index))
+            faces.append(f'{face_str}0')
         face_count = len(geometry.faces)
     else:
         # Face 3D
@@ -232,6 +243,25 @@ def shades_to_ies(shades: List[Shade], thickness: float = 0.01) -> str:
         )
 
     return '\n'.join((single_shades, group_shades))
+
+
+def shade_meshes_to_ies(shades: List[ShadeMesh]) -> str:
+    """Convert a list of ShadeMeshes to a GEM string.
+
+    Args:
+        shades: A list of ShadeMeshes.
+
+    Returns:
+        A formatted string that represents this shade in GEM format.
+
+    """
+    return '' if not shades else \
+        '\n'.join(
+            _shade_geometry_to_ies(
+                geometry=shade, name=shade.display_name, is_detached=shade.is_detached,
+                identifier=shade.identifier, user_data=shade.user_data
+            ) for shade in shades
+        )
 
 
 def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
@@ -358,6 +388,7 @@ def model_to_ies(
         room_to_ies(room, shade_thickness=shade_thickness) for room in model.rooms
     ]
     context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
+    mesh_shades = shade_meshes_to_ies(model.shade_meshes)
 
     # write to GEM
     name = name or model.display_name
@@ -370,5 +401,6 @@ def model_to_ies(
         outf.write(header)
         outf.write('\n'.join(rooms_data) + '\n')
         outf.write(context_shades)
+        outf.write(mesh_shades)
 
     return out_file
