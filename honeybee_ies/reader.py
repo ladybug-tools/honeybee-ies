@@ -4,10 +4,12 @@ import re
 from typing import Iterator, List, Tuple, Union, Dict
 import uuid
 
-from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D, Plane
+from ladybug_geometry.geometry3d import Face3D, Point3D, Vector3D, \
+    Plane, Mesh3D
 from ladybug_geometry.geometry2d import Polygon2D, Point2D, Vector2D
 from ladybug_geometry.geometry2d.polygon import closest_point2d_on_line2d
-from honeybee.model import Model, Shade, Room, Face, Aperture, Door, AirBoundary
+from honeybee.model import Model, Shade, Room, Face, Aperture, Door, \
+    AirBoundary, ShadeMesh
 from honeybee.boundarycondition import Outdoors, Ground
 from honeybee.typing import clean_string, clean_and_id_ep_string
 
@@ -245,7 +247,8 @@ def _create_pv(info: str) -> Shade:
     return pv
 
 
-def _parse_gem_segment(segment: str):
+def _parse_gem_segment(
+        segment: str, ignore_shade_mesh=False) -> Union[Room, ShadeMesh, Shade]:
     """Parse a segment of the GEM file.
 
     Each segment has the information for a room or a shade object.
@@ -291,6 +294,24 @@ def _parse_gem_segment(segment: str):
         Point3D(*[float(v) for v in next(content).split()])
         for _ in range(ver_count)
     ]
+
+    # create a shade mesh for shades with multiple faces
+    if not ignore_shade_mesh \
+        and gem_type == GEM_TYPES.ContextBuilding \
+            and face_count > 1:
+        faces = []
+        for _ in range(face_count):
+            boundary = tuple(int(i) - 1 for i in next(content).split()[1:])
+            opening_count = int(next(content))  # pass the line for the opening count
+            if opening_count > 0 or len(boundary) > 4:
+                # there is a hole in the shade or the face has more than 4 edges
+                # use the old method of using faces instead
+                return _parse_gem_segment(segment, True)
+            faces.append(boundary)
+        mesh_geometry = Mesh3D(vertices=vertices, faces=faces)
+        mesh = ShadeMesh(identifier=identifier, geometry=mesh_geometry, is_detached=True)
+        _update_name(mesh, display_name)
+        return mesh
 
     # create faces
     for _ in range(face_count):
@@ -456,15 +477,18 @@ def model_from_ies(gem: str) -> Model:
     parsed_objects = [_parse_gem_segment(segment) for segment in segments]
     rooms = []
     shades = []
+    shade_meshes = []
     for r in parsed_objects:
         if isinstance(r, Room):
             rooms.append(r)
+        elif isinstance(r, ShadeMesh):
+            shade_meshes.append(r)
         else:
             shades.extend(r)
 
     model = Model(
         clean_string(gem_file.stem), rooms=rooms, units='Meters', orphaned_shades=shades,
-        tolerance=0.0001
+        shade_meshes=shade_meshes, tolerance=0.0001
     )
     model.display_name = gem_file.stem
     return model
