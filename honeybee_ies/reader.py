@@ -469,11 +469,17 @@ def _parse_gem_segment(
         return faces
 
 
-def model_from_gem(gem_str: str, model_id: str='Unnamed', model_name=None) -> Model:
+def model_from_gem(
+        gem_str: str, model_id: str = 'Unnamed', model_name: str = None
+    ) -> Model:
     """Create a Honeybee Model from the string contents of a VE GEM file.
 
     Args:
         gem_str: Text string representation of the contents of a GEM file.
+        model_id: Text string to be applied as the Model identifier. Typically,
+            this is derived from the GEM file name. (Default: Unnamed).
+        model_name: Text string to be applied as the Model identifier. If None,
+            this will be the same as the model_id. (Default: None).
 
     Returns:
         A Honeybee Model derived from the GEM file contents.
@@ -503,7 +509,14 @@ def model_from_gem(gem_str: str, model_id: str='Unnamed', model_name=None) -> Mo
 
 
 def model_from_ies(gem: str) -> Model:
-    """Create a Honeybee Model from a VE GEM file."""
+    """Create a Honeybee Model from a VE GEM file.
+
+    Args:
+        gem: String for the path to a VE GEM file.
+
+    Returns:
+        A Honeybee Model derived from the GEM file contents.
+    """
     # load the contents of the GEM file
     gem_file = pathlib.Path(gem)
     file_contents = gem_file.read_text()
