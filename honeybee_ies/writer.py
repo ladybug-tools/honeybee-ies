@@ -421,6 +421,34 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
         return space
 
 
+def model_to_gem(model: Model, shade_thickness: float = 0.0):
+    """Generate an IES GEM string representation of a Model.
+
+    Args:
+        model: A honeybee model.
+        shade_thickness:The thickness of the shade face in meters. This value will be
+            used to extrude shades with no group id. IES doesn't consider the effect of
+            shades with no thickness in SunCalc. This function extrudes the geometry to
+            create a closed volume for the shade. (Default: 0.0).
+
+    Returns:
+        Text string representation of the contents of a GEM file derived from
+        the input model.
+    """
+    # ensure model is in metric and has identifiers that are acceptable for GEM
+    model = model.duplicate()
+    model.convert_to_units(units='Meters')
+    _convert_room_ids(model)
+    # create and return the GEM file string
+    header = 'COM GEM data file exported by Pollination\\nANT'
+    rooms_data = [room_to_ies(room, shade_thickness=shade_thickness)
+                  for room in model.rooms]
+    context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
+    mesh_shades = shade_meshes_to_ies(model.shade_meshes)
+    gem_data = [header] + rooms_data + [context_shades, mesh_shades]
+    return '\\n'.join(gem_data)
+
+
 def model_to_ies(
     model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.0,
     write_id_mapper=True
@@ -443,17 +471,15 @@ def model_to_ies(
     Returns:
         Path to exported GEM file.
     """
-    # ensure model is in metrics
+    # ensure model is in metric and has identifiers that are acceptable for GEM
     model = model.duplicate()
     model.convert_to_units(units='Meters')
-
     id_mapper = _convert_room_ids(model)
 
-    header = 'COM GEM data file exported by Pollination\n' \
-        'ANT\n'
-    rooms_data = [
-        room_to_ies(room, shade_thickness=shade_thickness) for room in model.rooms
-    ]
+    # get the text for the GEM file contents
+    header = 'COM GEM data file exported by Pollination\nANT\n'
+    rooms_data = [room_to_ies(room, shade_thickness=shade_thickness)
+                  for room in model.rooms]
     context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
     mesh_shades = shade_meshes_to_ies(model.shade_meshes)
 
