@@ -469,11 +469,17 @@ def _parse_gem_segment(
         return faces
 
 
-def model_from_ies(gem: str) -> Model:
-    """Create a Honeybee Model from a VE GEM file."""
-    gem_file = pathlib.Path(gem)
-    # split the gem file into separate segments
-    segments = gem_file.read_text().split('\nLAYER')[1:]
+def model_from_gem(gem_str: str, model_id: str='Unnamed', model_name=None) -> Model:
+    """Create a Honeybee Model from the string contents of a VE GEM file.
+
+    Args:
+        gem_str: Text string representation of the contents of a GEM file.
+
+    Returns:
+        A Honeybee Model derived from the GEM file contents.
+    """
+    # parse the Rooms, Shades and ShadeMeshes
+    segments = gem_str.split('\nLAYER')[1:]
     parsed_objects = [_parse_gem_segment(segment) for segment in segments]
     rooms = []
     shades = []
@@ -486,9 +492,20 @@ def model_from_ies(gem: str) -> Model:
         else:
             shades.extend(r)
 
+    # create the Model
     model = Model(
-        clean_string(gem_file.stem), rooms=rooms, units='Meters', orphaned_shades=shades,
-        shade_meshes=shade_meshes, tolerance=0.0001
+        clean_string(model_id), rooms=rooms, orphaned_shades=shades,
+        shade_meshes=shade_meshes, units='Meters', tolerance=0.0001
     )
-    model.display_name = gem_file.stem
+    if model_name is not None:
+        model.display_name = model_name
     return model
+
+
+def model_from_ies(gem: str) -> Model:
+    """Create a Honeybee Model from a VE GEM file."""
+    # load the contents of the GEM file
+    gem_file = pathlib.Path(gem)
+    file_contents = gem_file.read_text()
+    # return the Honeybee Model
+    return model_from_gem(file_contents, clean_string(gem_file.stem), gem_file.stem)
