@@ -519,6 +519,6 @@ def model_from_ies(gem: str) -> Model:
     """
     # load the contents of the GEM file
     gem_file = pathlib.Path(gem)
-    file_contents = gem_file.read_text()
+    file_contents = gem_file.read_text(encoding='utf-8')
     # return the Honeybee Model
     return model_from_gem(file_contents, clean_string(gem_file.stem), gem_file.stem)

@@ -209,3 +209,15 @@ def test_model_with_shade_mesh():
     assert 'IES Tree_2' in content
     assert 'IES Tree_3' in content
     assert '182 200' in content
+
+
+def test_model_non_ascii():
+    in_file = './tests/assets/room_non_ascii.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True)
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(model, out_folder.as_posix(), name='room_non_ascii')
+    assert outf.exists()
+
+    content = outf.read_text(encoding='utf-8')
+    assert 'IES اتاق خواب [' in content

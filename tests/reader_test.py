@@ -29,3 +29,9 @@ def test_pv():
     in_file = './tests/assets/pv.gem'
     model = model_from_ies(in_file)
     assert len(model.shades) == 1
+
+
+def test_non_ascii():
+    in_file = './tests/assets/room_non_ascii.gem'
+    model = model_from_ies(in_file)
+    assert model.rooms[0].display_name == 'اتاق خواب'
