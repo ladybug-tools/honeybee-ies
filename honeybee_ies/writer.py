@@ -53,7 +53,10 @@ def _convert_room_ids(model: Model) -> Dict:
         id_counter[ve_identifier] += 1
         full_ve_id = f'{ve_identifier}{id_counter[ve_identifier]:06d}'
         id_mapper[identifier] = full_ve_id
-        room.identifier = full_ve_id
+        try:
+            room.identifier = full_ve_id
+        except AssertionError:
+            room.identifier = f'RM{id_counter[ve_identifier]:06d}'
     return id_mapper
 
 
@@ -490,7 +493,7 @@ def model_to_ies(
     out_folder = pathlib.Path(folder)
     out_folder.mkdir(parents=True, exist_ok=True)
     out_file = out_folder.joinpath(name)
-    with out_file.open('w') as outf:
+    with out_file.open('w', encoding='utf-8') as outf:
         outf.write(header)
         outf.write('\n'.join(rooms_data) + '\n')
         outf.write(context_shades)
