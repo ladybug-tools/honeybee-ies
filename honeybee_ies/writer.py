@@ -449,7 +449,7 @@ def model_to_gem(model: Model, shade_thickness: float = 0.0):
     context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
     mesh_shades = shade_meshes_to_ies(model.shade_meshes)
     gem_data = [header] + rooms_data + [context_shades, mesh_shades]
-    return '\\n'.join(gem_data)
+    return '\n'.join(gem_data)
 
 
 def model_to_ies(
