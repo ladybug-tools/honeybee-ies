@@ -3,8 +3,11 @@ import click
 import sys
 import pathlib
 import logging
+import json
 
+from ladybug.futil import write_to_file_by_name
 from honeybee.model import Model
+from honeybee_ies.writer import model_to_gem
 from honeybee_ies.reader import model_from_ies
 
 _logger = logging.getLogger(__name__)
@@ -16,36 +19,40 @@ def translate():
 
 
 @translate.command('model-to-gem')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.option(
-    '--name', '-n', help='Name of the output file.', default="model", show_default=True
-)
-@click.option(
-    '--folder', '-f', help='Path to target folder.',
-    type=click.Path(exists=False, file_okay=False, resolve_path=True,
-                    dir_okay=True), default='.', show_default=True
-)
 @click.option(
     '--shade-thickness', '-st', help='Optional value for shade thickness in meters. '
     'This value will be used to extrude shades with no group id. IES doesn\'t consider '
     'the effect of shades with no thickness in SunCalc. This function extrudes the '
     'geometry to create a closed volume for the shade.',
-    type=click.FLOAT, default=0, show_default=True
-)
-def model_to_gem(model_json, name, folder, shade_thickness):
+    type=click.FLOAT, default=0, show_default=True)
+@click.option(
+    '--name', '-n', help='Deprecated option to set the name of the output file.',
+    default=None, show_default=True)
+@click.option(
+    '--folder', '-f', help='Deprecated option to set the path to target folder.',
+    type=click.Path(file_okay=False, resolve_path=True, dir_okay=True), default=None)
+@click.option(
+    '--output-file', '-o', help='Optional GEM file path to output the GEM string '
+    'of the translation. By default this will be printed out to stdout.',
+    type=click.File('w'), default='-', show_default=True)
+def model_to_gem_file(model_file, shade_thickness, name, folder, output_file):
     """Translate a Model JSON file to an IES GEM file.
     \b
 
     Args:
-        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
-
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
-        model = Model.from_file(model_json)
-        folder = pathlib.Path(folder)
-        folder.mkdir(parents=True, exist_ok=True)
-        model.to_gem(folder.as_posix(), name=name, shade_thickness=shade_thickness)
+        model = Model.from_file(model_file)
+        gem_str = model_to_gem(model, shade_thickness=shade_thickness)
+        if folder is not None and name is not None:
+            if not name.lower().endswith('.gem'):
+                name = name + '.gem'
+            write_to_file_by_name(folder, name, gem_str, True)
+        else:
+            output_file.write(gem_str)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -57,26 +64,30 @@ def model_to_gem(model_json, name, folder, shade_thickness):
 @click.argument('gem-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
-    '--name', '-n', help='Name of the output file.', default="model", show_default=True
-)
+    '--name', '-n', help='Deprecated option to set the name of the output file.',
+    default=None, show_default=True)
 @click.option(
-    '--folder', '-f', help='Path to target folder.',
-    type=click.Path(exists=False, file_okay=False, resolve_path=True,
-                    dir_okay=True), default='.', show_default=True
-)
-def gem_to_model(gem_file, name, folder):
+    '--folder', '-f', help='Deprecated option to set the path to target folder.',
+    type=click.Path(file_okay=False, resolve_path=True, dir_okay=True), default=None)
+@click.option(
+    '--output-file', '-o', help='Optional HBJSON file path to output the HBJSON string '
+    'of the translation. By default this will be printed out to stdout.',
+    type=click.File('w'), default='-', show_default=True)
+def gem_to_model_file(gem_file, name, folder, output_file):
     """Translate an IES GEM file to a HBJSON model.
     \b
 
     Args:
         gem-file: Full path to an IES VE GEM file.
-
     """
     try:
         model = model_from_ies(gem_file)
-        folder = pathlib.Path(folder)
-        folder.mkdir(parents=True, exist_ok=True)
-        model.to_hbjson(name=name, folder=folder.as_posix())
+        if folder is not None and name is not None:
+            folder = pathlib.Path(folder)
+            folder.mkdir(parents=True, exist_ok=True)
+            model.to_hbjson(name=name, folder=folder.as_posix())
+        else:
+            output_file.write(json.dumps(model.to_dict()))
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
