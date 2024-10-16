@@ -259,15 +259,15 @@ def _parse_gem_segment(
             break
     else:
         raise ValueError(
-            'There is a segment with an unsupported type in the input GEM file. ' \
-            'Reach out to us with a copy of the GEM file and the information below:\n' \
+            'There is a segment with an unsupported type in the input GEM file. '
+            'Reach out to us with a copy of the GEM file and the information below:\n'
             f'{segment}'
         )
 
     gem_type = _gem_object_type(info=info, keyword=keyword)
 
     # remove empty lines if any
-    content = iter(l for l in segments.split('\n') if l.strip())
+    content = iter(lin for lin in segments.split('\n') if lin.strip())
     display_name = next(content)
     cleaned_display_name = clean_string(display_name)
     identifier = clean_and_id_ep_string(cleaned_display_name)
@@ -372,7 +372,8 @@ def _parse_gem_segment(
                         continue
                     # there are multiple air boundaries. create an AirBoundary for each.
                     for hole in holes_2d:
-                        hole = boundary_geometry_polygon2d.snap_to_polygon(hole, MODEL_TOLERANCE * 5)
+                        hole = boundary_geometry_polygon2d.snap_to_polygon(
+                            hole, MODEL_TOLERANCE * 5)
                         # map the hole back to 3D
                         hole = [boundary_geometry.plane.xy_to_xyz(ver) for ver in hole]
                         hole_geo = Face3D(hole)
@@ -408,7 +409,8 @@ def _parse_gem_segment(
                             continue
                         for f_hole in base_face.holes:
                             f_hole_geo = Face3D(f_hole)
-                            if hole_geo.center.distance_to_point(f_hole_geo.center) <= MODEL_TOLERANCE * 5:
+                            if hole_geo.center.distance_to_point(f_hole_geo.center) <= \
+                                    MODEL_TOLERANCE * 5:
                                 # this hole is inside the face
                                 base_faces_holes[count].append(f_hole_geo)
                                 holes_tracker.append(hole_count)
@@ -470,8 +472,8 @@ def _parse_gem_segment(
 
 
 def model_from_gem(
-        gem_str: str, model_id: str = 'Unnamed', model_name: str = None
-    ) -> Model:
+    gem_str: str, model_id: str = 'Unnamed', model_name: str = None
+) -> Model:
     """Create a Honeybee Model from the string contents of a VE GEM file.
 
     Args:
