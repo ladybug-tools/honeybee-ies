@@ -4,7 +4,7 @@ from click.testing import CliRunner
 
 from ladybug.futil import nukedir
 
-from honeybee_ies.cli.translate import model_to_gem_file
+from honeybee_ies.cli.translate import model_to_gem_cli
 
 
 def test_model_to_gem():
@@ -14,8 +14,9 @@ def test_model_to_gem():
     name = 'cli_test_45'
 
     result = runner.invoke(
-        model_to_gem_file, [input_hb_model, '--folder', folder, '--name', name]
+        model_to_gem_cli, [input_hb_model, '--folder', folder, '--name', name]
     )
+    print(result.output)
     assert result.exit_code == 0
     assert os.path.isfile(os.path.join(folder, f'{name}.gem'))
     nukedir(folder, True)
