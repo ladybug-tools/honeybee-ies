@@ -345,6 +345,12 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
     air_boundary_count = 0
     _key = '__ies_import__'
     for face_i, face in zip(room.geometry.face_indices, room.faces):
+        # ensure that the face_i are aligned with the face vertices
+        boundary = tuple(unique_vertices[i] for i in face_i[0])
+        rebuilt_face = Face3D(boundary)
+        if not face.geometry.plane.n.angle(rebuilt_face.plane.n) <= math.radians(1):
+            # face indices are reversed from Face3D objects
+            face_i = [list(reversed(pt_i)) for pt_i in face_i]
         if isinstance(face.type, AirBoundary) and face.user_data \
                 and _key in face.user_data:
             # This air boundary was created during the process of importing holes
