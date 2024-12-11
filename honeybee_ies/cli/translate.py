@@ -5,6 +5,7 @@ import os
 import logging
 import json
 
+from ladybug.commandutil import process_content_to_output
 from honeybee.model import Model
 from honeybee_ies.writer import model_to_gem as model_to_gem_str
 from honeybee_ies.reader import model_from_ies
@@ -70,7 +71,7 @@ def model_to_gem(model_file, shade_thickness=0, output_file=None):
     """
     model = Model.from_file(model_file)
     gem_str = model_to_gem_str(model, shade_thickness=shade_thickness)
-    return _process_content_to_output(gem_str, output_file)
+    return process_content_to_output(gem_str, output_file)
 
 
 @translate.command('gem-to-model')
@@ -117,20 +118,4 @@ def gem_to_model(gem_file, output_file=None):
     """
     model = model_from_ies(gem_file)
     content_str = json.dumps(model.to_dict())
-    return _process_content_to_output(content_str, output_file)
-
-
-def _process_content_to_output(content_str, output_file):
-    """Process content strings for various types of output_files."""
-    if output_file is None:
-        return content_str
-    elif isinstance(output_file, str):
-        if not os.path.isdir(os.path.dirname(output_file)):
-            os.makedirs(os.path.dirname(output_file))
-        with open(output_file, 'w') as of:
-            of.write(content_str)
-    else:
-        if 'stdout' not in str(output_file):
-            if not os.path.isdir(os.path.dirname(output_file.name)):
-                os.makedirs(os.path.dirname(output_file.name))
-        output_file.write(content_str)
+    return process_content_to_output(content_str, output_file)
