@@ -1,1 +1,1 @@
-honeybee-core>=1.57.14
+honeybee-core>=1.60.4
