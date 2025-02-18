@@ -221,3 +221,36 @@ def test_model_non_ascii():
 
     content = outf.read_text(encoding='utf-8')
     assert 'IES اتاق خواب [' in content
+
+
+def test_room_with_plenum():
+    in_file = './tests/assets/room_with_plenum.hbjson'
+    out_folder = pathlib.Path('./tests/assets/temp')
+    out_folder.mkdir(parents=True, exist_ok=True)
+    model = Model.from_hbjson(in_file)
+    outf = model_to_ies(model, out_folder.as_posix(), name='room_with_plenum')
+    assert outf.exists()
+
+    floor_plenum_str = 'SUBTYPE\n' \
+        '2002\n' \
+        'COLOURRGB\n' \
+        '16711680\n' \
+        'IES 131-Corridor Floor Plenum [13000000]'
+
+    room_str = 'SUBTYPE\n' \
+        '2001\n' \
+        'COLOURRGB\n' \
+        '16711680\n' \
+        'IES 131-Corridor [13000001]'
+
+    ceiling_plenum_str = 'SUBTYPE\n' \
+        '2002\n' \
+        'COLOURRGB\n' \
+        '16711680\n' \
+        'IES 131-Corridor Ceiling Plenum [13000002]'
+
+    content = outf.read_text()
+
+    assert floor_plenum_str in content
+    assert room_str in content
+    assert ceiling_plenum_str in content
