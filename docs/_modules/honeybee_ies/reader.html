@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_ies.reader &#8212; honeybee-ies  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e6365d57" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<link rel="icon" type="image/x-icon" href="https://github.com/ladybug-tools/artwork/raw/refs/heads/master/icons_bugs/ico/honeybee.ico">
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee-ies</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/translate.html#honeybee-ies-translate">honeybee-ies translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-ies-translate-gem-to-model">gem-to-model</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-ies-translate-model-to-gem">model-to-gem</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee_ies.html">honeybee_ies package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_ies.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_ies.cli.html">honeybee_ies.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.cli.translate.html">honeybee_ies.cli.translate module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_ies.cli.translate.html#honeybee_ies.cli.translate.gem_to_model"><code class="docutils literal notranslate"><span class="pre">gem_to_model()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_ies.cli.translate.html#honeybee_ies.cli.translate.model_to_gem"><code class="docutils literal notranslate"><span class="pre">model_to_gem()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.cli.html#module-honeybee_ies.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_ies.properties.html">honeybee_ies.properties package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.properties.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.properties.model.html">honeybee_ies.properties.model module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_ies.properties.model.html#honeybee_ies.properties.model.ModelIESProperties"><code class="docutils literal notranslate"><span class="pre">ModelIESProperties</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_ies.properties.model.html#honeybee_ies.properties.model.ModelIESProperties.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_ies.properties.model.html#honeybee_ies.properties.model.ModelIESProperties.apply_properties_from_dict"><code class="docutils literal notranslate"><span class="pre">apply_properties_from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_ies.properties.model.html#honeybee_ies.properties.model.ModelIESProperties.check_for_extension"><code class="docutils literal notranslate"><span class="pre">check_for_extension()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_ies.properties.model.html#honeybee_ies.properties.model.ModelIESProperties.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_ies.properties.model.html#honeybee_ies.properties.model.ModelIESProperties.host"><code class="docutils literal notranslate"><span class="pre">host</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.properties.html#module-honeybee_ies.properties">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_ies.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_ies.reader.html">honeybee_ies.reader module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.reader.html#honeybee_ies.reader.model_from_gem"><code class="docutils literal notranslate"><span class="pre">model_from_gem()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.reader.html#honeybee_ies.reader.model_from_ies"><code class="docutils literal notranslate"><span class="pre">model_from_ies()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_ies.templates.html">honeybee_ies.templates module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_ies.types.html">honeybee_ies.types module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES"><code class="docutils literal notranslate"><span class="pre">GEM_TYPES</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.category"><code class="docutils literal notranslate"><span class="pre">category()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.color"><code class="docutils literal notranslate"><span class="pre">color()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.from_info"><code class="docutils literal notranslate"><span class="pre">from_info()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.from_user_data"><code class="docutils literal notranslate"><span class="pre">from_user_data()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.keyword"><code class="docutils literal notranslate"><span class="pre">keyword()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.layer"><code class="docutils literal notranslate"><span class="pre">layer()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.subtype"><code class="docutils literal notranslate"><span class="pre">subtype()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.to_gem"><code class="docutils literal notranslate"><span class="pre">to_gem()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.type"><code class="docutils literal notranslate"><span class="pre">type()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.ContextBuilding"><code class="docutils literal notranslate"><span class="pre">ContextBuilding</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.PV"><code class="docutils literal notranslate"><span class="pre">PV</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.Shade"><code class="docutils literal notranslate"><span class="pre">Shade</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.Shade_2"><code class="docutils literal notranslate"><span class="pre">Shade_2</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.Space"><code class="docutils literal notranslate"><span class="pre">Space</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.Topography"><code class="docutils literal notranslate"><span class="pre">Topography</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.TranslucentShade"><code class="docutils literal notranslate"><span class="pre">TranslucentShade</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.Tree"><code class="docutils literal notranslate"><span class="pre">Tree</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_ies.types.html#honeybee_ies.types.GEM_TYPES.UnconditionedSpace"><code class="docutils literal notranslate"><span class="pre">UnconditionedSpace</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_ies.writer.html">honeybee_ies.writer module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.writer.html#honeybee_ies.writer.model_to_gem"><code class="docutils literal notranslate"><span class="pre">model_to_gem()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.writer.html#honeybee_ies.writer.model_to_ies"><code class="docutils literal notranslate"><span class="pre">model_to_ies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.writer.html#honeybee_ies.writer.room_to_ies"><code class="docutils literal notranslate"><span class="pre">room_to_ies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.writer.html#honeybee_ies.writer.shade_meshes_to_ies"><code class="docutils literal notranslate"><span class="pre">shade_meshes_to_ies()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_ies.writer.html#honeybee_ies.writer.shades_to_ies"><code class="docutils literal notranslate"><span class="pre">shades_to_ies()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_ies.html#module-honeybee_ies">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee_ies.html">honeybee_ies package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../honeybee_ies.html">honeybee_ies package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee_ies.reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Face3D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">Vector3D</span><span class="p">,</span> \
+    <span class="n">Plane</span><span class="p">,</span> <span class="n">Mesh3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon2D</span><span class="p">,</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Vector2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry2d.polygon</span><span class="w"> </span><span class="kn">import</span> <span class="n">closest_point2d_on_line2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">honeybee.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Shade</span><span class="p">,</span> <span class="n">Room</span><span class="p">,</span> <span class="n">Face</span><span class="p">,</span> <span class="n">Aperture</span><span class="p">,</span> <span class="n">Door</span><span class="p">,</span> \
+    <span class="n">AirBoundary</span><span class="p">,</span> <span class="n">ShadeMesh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">honeybee.boundarycondition</span><span class="w"> </span><span class="kn">import</span> <span class="n">Outdoors</span><span class="p">,</span> <span class="n">Ground</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">honeybee.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">clean_string</span><span class="p">,</span> <span class="n">clean_and_id_ep_string</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">GEM_TYPES</span>
+
+
+<span class="n">PI</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">Z_AXIS</span> <span class="o">=</span> <span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ROOF_ANGLE_TOLERANCE</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">MODEL_TOLERANCE</span> <span class="o">=</span> <span class="mf">0.001</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_gem_object_type</span><span class="p">(</span><span class="n">info</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;IES&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GEM_TYPES</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get GEM object type from info.&quot;&quot;&quot;</span>
+    <span class="n">type_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^TYPE\n(\d*)&#39;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">subtype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^SUBTYPE\n(\d*)&#39;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">category</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^CATEGORY\n(\d*)&#39;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">from_info</span><span class="p">(</span>
+        <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="n">type_</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="n">keyword</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_user_date</span><span class="p">(</span><span class="n">face</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Face</span><span class="p">,</span> <span class="n">Shade</span><span class="p">],</span> <span class="n">user_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add user data to a face or a shade object.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user_data</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">face</span><span class="o">.</span><span class="n">user_data</span><span class="p">:</span>
+        <span class="c1"># the dictionary exists</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">user_data</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_id</span><span class="p">(</span><span class="n">display_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the id from display name.</span>
+
+<span class="sd">    In version 2023 the ID is included in the GEM file as inside [] at the end of the</span>
+<span class="sd">    name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">id_</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s\[(.*)\]$&#39;</span><span class="p">,</span> <span class="n">display_name</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">id_</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">id_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_update_name</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Shade</span><span class="p">,</span> <span class="n">Room</span><span class="p">],</span> <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add group id and display name to objects.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Room</span><span class="p">):</span>
+        <span class="n">identifier</span> <span class="o">=</span> \
+            <span class="n">clean_string</span><span class="p">(</span><span class="n">display_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">count</span> \
+            <span class="k">else</span> <span class="n">clean_string</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">display_name</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">_add_user_date</span><span class="p">(</span>
+            <span class="n">face</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">user_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;__group_id__&#39;</span><span class="p">:</span> <span class="n">identifier</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="n">id_</span> <span class="o">=</span> <span class="n">_get_id</span><span class="p">(</span><span class="n">display_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">id_</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">count</span> <span class="k">else</span> <span class="n">id_</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; [</span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_shade</span><span class="p">(</span>
+        <span class="n">boundary</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Point3D</span><span class="p">],</span> <span class="n">holes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Point3D</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_detached</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">user_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Honeybee Shade object&quot;&quot;&quot;</span>
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="n">holes</span><span class="p">)</span>
+    <span class="n">face</span> <span class="o">=</span> <span class="n">Shade</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">,</span>
+        <span class="n">is_detached</span><span class="o">=</span><span class="n">is_detached</span>
+    <span class="p">)</span>
+    <span class="n">_add_user_date</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">user_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">face</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opening_from_ies</span><span class="p">(</span><span class="n">geometry</span><span class="p">:</span> <span class="n">Face3D</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Point3D</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate an opening from gem format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        parent_geo: Geometry of the parent object.</span>
+<span class="sd">        content: A GEM string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        opening_geos: A list of Face3D geometries for openings.</span>
+<span class="sd">        opening_type: An integer between 0-2. 0 for apertures, 1 for doors and 2 for</span>
+<span class="sd">            holes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">z</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># horizontal faces</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">upper_right_corner</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">lower_left_corner</span>
+
+    <span class="c1"># This is how the next line looks</span>
+    <span class="c1"># 5 2</span>
+    <span class="n">ver_count</span><span class="p">,</span> <span class="n">opening_type</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+
+    <span class="c1"># calculate the vertices from X, Y values</span>
+    <span class="c1"># 0.000000     0.906100</span>
+    <span class="c1"># 0.000000     0.000000</span>
+    <span class="c1"># 10.373100     0.000000</span>
+    <span class="n">tolerance</span> <span class="o">=</span> <span class="n">MODEL_TOLERANCE</span> <span class="o">*</span> <span class="mi">5</span>
+    <span class="n">boundary_2d</span><span class="p">:</span> <span class="n">Polygon2D</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">boundary_polygon2d</span>
+    <span class="n">offset_boundary_2d</span> <span class="o">=</span> <span class="n">boundary_2d</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+    <span class="n">origin_2d</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xyz_to_xy</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+
+    <span class="c1"># create vertices in 2D</span>
+    <span class="n">opening_vertices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">opening_vertices_2d</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ver_count</span><span class="p">):</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">x_m</span><span class="p">,</span> <span class="n">y_m</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cnt</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Translucent shade</span>
+            <span class="n">x_m</span><span class="p">,</span> <span class="n">y_m</span><span class="p">,</span> <span class="n">opacity</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cnt</span><span class="p">]</span>
+        <span class="n">vertex_2d</span> <span class="o">=</span> <span class="n">Point2D</span><span class="p">(</span><span class="n">origin_2d</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_m</span><span class="p">,</span> <span class="n">origin_2d</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_m</span><span class="p">)</span>
+        <span class="n">vertex</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">vertex_2d</span><span class="p">)</span>
+        <span class="n">on_segments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">boundary_2d</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+            <span class="n">close_pt</span> <span class="o">=</span> <span class="n">closest_point2d_on_line2d</span><span class="p">(</span><span class="n">vertex_2d</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">vertex_2d</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">close_pt</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tolerance</span><span class="p">:</span>
+                <span class="n">on_segments</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">segment</span><span class="p">,</span> <span class="n">close_pt</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">on_segments</span> <span class="ow">or</span> <span class="n">opening_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># for holes don&#39;t move the vertex</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">on_segments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># it is an edge</span>
+            <span class="n">vector</span><span class="p">:</span> <span class="n">Vector2D</span> <span class="o">=</span> <span class="n">on_segments</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">v</span>
+            <span class="n">v1</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">PI</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="o">*</span> <span class="n">tolerance</span>
+            <span class="n">v2</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="o">-</span><span class="n">PI</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="o">*</span> <span class="n">tolerance</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">vertex_2d</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">boundary_2d</span><span class="o">.</span><span class="n">is_point_inside_check</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="n">vertex_2d</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">vertex_2d</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">boundary_2d</span><span class="o">.</span><span class="n">is_point_inside_check</span><span class="p">:</span>
+                    <span class="n">vertex_2d</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">on_segments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># The point is adjacent to a corner. Find the closest point to the offset boundary</span>
+            <span class="n">dist_col</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">offset_boundary_2d</span><span class="o">.</span><span class="n">segments</span><span class="p">:</span>
+                <span class="n">cp</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">closest_point</span><span class="p">(</span><span class="n">vertex_2d</span><span class="p">)</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">vertex_2d</span><span class="p">)</span>
+                <span class="n">dist_col</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">dist</span><span class="p">,</span> <span class="n">cp</span><span class="p">])</span>
+
+            <span class="n">points_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dist_col</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">vertex_2d</span> <span class="o">=</span> <span class="n">points_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># this should not happen!</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">vertex</span><span class="si">}</span><span class="s1"> is adjacent to more than 2 edges of the same polygon.&#39;</span><span class="p">)</span>
+
+        <span class="n">vertex</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">vertex_2d</span><span class="p">)</span>
+        <span class="n">opening_vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span>
+        <span class="n">opening_vertices_2d</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertex_2d</span><span class="p">)</span>
+
+    <span class="n">org_pl</span> <span class="o">=</span> <span class="n">Polygon2D</span><span class="p">(</span><span class="n">opening_vertices_2d</span><span class="p">)</span>
+    <span class="n">opening_area</span> <span class="o">=</span> <span class="n">org_pl</span><span class="o">.</span><span class="n">area</span>
+
+    <span class="k">return</span> <span class="n">opening_type</span><span class="p">,</span> <span class="n">opening_vertices</span><span class="p">,</span> <span class="n">opening_vertices_2d</span><span class="p">,</span> <span class="n">opening_area</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_tree</span><span class="p">(</span><span class="n">info</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tree_type</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shade</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Tree from an IES Tree.&quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Length of data for tree is not 8 segments.&#39;</span>
+    <span class="c1"># calculate tree geometry</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">x_scale</span><span class="p">,</span> <span class="n">y_scale</span><span class="p">,</span> <span class="n">z_scale</span><span class="p">,</span> <span class="n">xy_rotation</span><span class="p">,</span> <span class="n">yz_rotation</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="n">x_scale</span> <span class="o">*=</span> <span class="mi">3</span>
+    <span class="n">y_scale</span> <span class="o">*=</span> <span class="mi">3</span>
+    <span class="n">z_scale</span> <span class="o">*=</span> <span class="mi">8</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+    <span class="c1"># move the base plane for half the x_scale</span>
+    <span class="n">x_base</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">o</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">x_base</span> <span class="o">=</span> <span class="n">x_base</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">Vector3D</span><span class="p">(</span><span class="o">-</span><span class="n">x_scale</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">y_base</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">o</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">y_base</span> <span class="o">=</span> <span class="n">y_base</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">y_scale</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">geometries</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Face3D</span><span class="o">.</span><span class="n">from_rectangle</span><span class="p">(</span><span class="n">x_scale</span><span class="p">,</span> <span class="n">z_scale</span><span class="p">,</span> <span class="n">x_base</span><span class="p">),</span>
+        <span class="n">Face3D</span><span class="o">.</span><span class="n">from_rectangle</span><span class="p">(</span><span class="n">y_scale</span><span class="p">,</span> <span class="n">z_scale</span><span class="p">,</span> <span class="n">y_base</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">geos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">geometry</span> <span class="ow">in</span> <span class="n">geometries</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">yz_rotation</span><span class="p">:</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="n">Vector3D</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yz_rotation</span><span class="p">),</span> <span class="n">base</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xy_rotation</span><span class="p">:</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">xy_rotation</span><span class="p">),</span> <span class="n">base</span><span class="p">)</span>
+        <span class="n">geos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+
+    <span class="n">tree_0</span> <span class="o">=</span> <span class="n">_create_shade</span><span class="p">(</span>
+        <span class="n">geos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower_left_counter_clockwise_vertices</span><span class="p">,</span>
+        <span class="n">user_data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;__gem_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;tree&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;__gem_tree_type__&#39;</span><span class="p">:</span> <span class="n">tree_type</span><span class="p">,</span>
+            <span class="s1">&#39;__ies_import__&#39;</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">tree_1</span> <span class="o">=</span> <span class="n">_create_shade</span><span class="p">(</span>
+        <span class="n">geos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower_left_counter_clockwise_vertices</span><span class="p">,</span>
+        <span class="n">user_data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;__gem_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;tree&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;__gem_tree_type__&#39;</span><span class="p">:</span> <span class="n">tree_type</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tree_0</span><span class="p">,</span> <span class="n">tree_1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_pv</span><span class="p">(</span><span class="n">info</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shade</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PV panel from GEM PV panel.&quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;Length of data for PV is not 7 segments.&#39;</span>
+    <span class="c1"># calculate PV geometry</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">xy_rotation</span><span class="p">,</span> <span class="n">yz_rotation</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+    <span class="n">base_plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">o</span><span class="o">=</span><span class="n">base</span><span class="p">)</span>
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="o">.</span><span class="n">from_rectangle</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="o">-</span><span class="n">height</span><span class="p">,</span> <span class="n">base_plane</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">yz_rotation</span><span class="p">:</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">Vector3D</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">yz_rotation</span><span class="p">),</span> <span class="n">base</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">xy_rotation</span><span class="p">:</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">rotate_xy</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">xy_rotation</span><span class="p">),</span> <span class="n">base</span><span class="p">)</span>
+
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">_create_shade</span><span class="p">(</span>
+        <span class="n">geometry</span><span class="o">.</span><span class="n">lower_left_counter_clockwise_vertices</span><span class="p">,</span>
+        <span class="n">user_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;__gem_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;pv&#39;</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pv</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_gem_segment</span><span class="p">(</span>
+        <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore_shade_mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Room</span><span class="p">,</span> <span class="n">ShadeMesh</span><span class="p">,</span> <span class="n">Shade</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a segment of the GEM file.</span>
+
+<span class="sd">    Each segment has the information for a room or a shade object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;IES&#39;</span><span class="p">,</span> <span class="s1">&#39;LAN&#39;</span><span class="p">,</span> <span class="s1">&#39;PVP&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">segment</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">,</span> <span class="n">segments</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s1"> &#39;</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;There is a segment with an unsupported type in the input GEM file. &#39;</span>
+            <span class="s1">&#39;Reach out to us with a copy of the GEM file and the information below:</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">segment</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+    <span class="n">gem_type</span> <span class="o">=</span> <span class="n">_gem_object_type</span><span class="p">(</span><span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="n">keyword</span><span class="p">)</span>
+
+    <span class="c1"># remove empty lines if any</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">lin</span> <span class="k">for</span> <span class="n">lin</span> <span class="ow">in</span> <span class="n">segments</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">lin</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">display_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">cleaned_display_name</span> <span class="o">=</span> <span class="n">clean_string</span><span class="p">(</span><span class="n">display_name</span><span class="p">)</span>
+    <span class="n">identifier</span> <span class="o">=</span> <span class="n">clean_and_id_ep_string</span><span class="p">(</span><span class="n">cleaned_display_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">PV</span><span class="p">:</span>
+        <span class="n">pv_info</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">face</span> <span class="o">=</span> <span class="n">_create_pv</span><span class="p">(</span><span class="n">pv_info</span><span class="p">)</span>
+        <span class="n">_update_name</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">display_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">face</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">Tree</span><span class="p">:</span>
+        <span class="n">tree_type</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">tree_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;2D Tree&#39;</span><span class="p">),</span> \
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">tree_type</span><span class="si">}</span><span class="s1"> is not currently supported.&#39;</span>
+        <span class="n">tree_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tree_type</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">tree_info</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">faces</span> <span class="o">=</span> <span class="n">_create_tree</span><span class="p">(</span><span class="n">tree_info</span><span class="p">,</span> <span class="n">tree_type</span><span class="o">=</span><span class="n">tree_type</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">faces</span><span class="p">):</span>
+            <span class="n">_update_name</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">display_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">faces</span>
+
+    <span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># everything else</span>
+    <span class="n">ver_count</span><span class="p">,</span> <span class="n">face_count</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="n">vertices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Point3D</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ver_count</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># create a shade mesh for shades with multiple faces</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ignore_shade_mesh</span> \
+        <span class="ow">and</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">ContextBuilding</span> \
+            <span class="ow">and</span> <span class="n">face_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">face_count</span><span class="p">):</span>
+            <span class="n">boundary</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">opening_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>  <span class="c1"># pass the line for the opening count</span>
+            <span class="k">if</span> <span class="n">opening_count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundary</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="c1"># there is a hole in the shade or the face has more than 4 edges</span>
+                <span class="c1"># use the old method of using faces instead</span>
+                <span class="k">return</span> <span class="n">_parse_gem_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">)</span>
+        <span class="n">mesh_geometry</span> <span class="o">=</span> <span class="n">Mesh3D</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="o">=</span><span class="n">faces</span><span class="p">)</span>
+        <span class="n">mesh</span> <span class="o">=</span> <span class="n">ShadeMesh</span><span class="p">(</span><span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">mesh_geometry</span><span class="p">,</span> <span class="n">is_detached</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_update_name</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">display_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mesh</span>
+
+    <span class="c1"># create faces</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">face_count</span><span class="p">):</span>
+        <span class="n">apertures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">doors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">holes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">holes_2d</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="p">[</span><span class="n">vertices</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">boundary_geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">enforce_right_hand</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">boundary_geometry_polygon2d</span> <span class="o">=</span> <span class="n">boundary_geometry</span><span class="o">.</span><span class="n">boundary_polygon2d</span>
+        <span class="n">boundary_area</span> <span class="o">=</span> <span class="n">boundary_geometry</span><span class="o">.</span><span class="n">area</span>
+        <span class="n">holes_area</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">opening_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">opening_count</span><span class="p">):</span>
+            <span class="n">opening_type</span><span class="p">,</span> <span class="n">opening_vertices</span><span class="p">,</span> <span class="n">opening_vertices_2d</span><span class="p">,</span> <span class="n">opening_area</span> <span class="o">=</span> \
+                <span class="n">_opening_from_ies</span><span class="p">(</span><span class="n">boundary_geometry</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opening_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># create an aperture</span>
+                <span class="n">aperture_geo</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">opening_vertices</span><span class="p">)</span>
+                <span class="n">aperture</span> <span class="o">=</span> <span class="n">Aperture</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">aperture_geo</span><span class="p">)</span>
+                <span class="n">apertures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aperture</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">opening_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># create a door</span>
+                <span class="n">door_geo</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">opening_vertices</span><span class="p">)</span>
+                <span class="n">door</span> <span class="o">=</span> <span class="n">Door</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">door_geo</span><span class="p">)</span>
+                <span class="n">doors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">door</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">opening_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># create a hole</span>
+                <span class="n">holes_area</span> <span class="o">+=</span> <span class="n">opening_area</span>
+                <span class="n">holes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opening_vertices</span><span class="p">)</span>
+                <span class="n">holes_2d</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Polygon2D</span><span class="p">(</span><span class="n">opening_vertices_2d</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported opening type: </span><span class="si">{</span><span class="n">opening_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">Space</span> <span class="ow">or</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">UnconditionedSpace</span><span class="p">:</span>
+            <span class="c1"># A model face</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">boundary</span><span class="p">)</span>
+            <span class="n">face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">apertures</span> <span class="ow">or</span> <span class="n">doors</span><span class="p">:</span>
+                <span class="c1"># change the boundary condition if it is set to ground</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span><span class="p">,</span> <span class="n">Ground</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s1">&#39;Changing boundary condition from Ground to Outdoors for &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">face</span><span class="o">.</span><span class="n">display_name</span><span class="si">}</span><span class="s1"> in </span><span class="si">{</span><span class="n">display_name</span><span class="si">}</span><span class="s1"> [</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s1">].&#39;</span>
+                    <span class="p">)</span>
+                    <span class="n">face</span><span class="o">.</span><span class="n">boundary_condition</span> <span class="o">=</span> <span class="n">Outdoors</span><span class="p">()</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">add_apertures</span><span class="p">(</span><span class="n">apertures</span><span class="p">)</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">add_doors</span><span class="p">(</span><span class="n">doors</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">holes</span><span class="p">:</span>
+                <span class="c1"># add an AirBoundary to cover the hole</span>
+                <span class="k">if</span> <span class="n">holes_area</span> <span class="o">&gt;=</span> <span class="mf">0.98</span> <span class="o">*</span> <span class="n">boundary_area</span><span class="p">:</span>
+                    <span class="c1"># the face is mostly created from holes</span>
+                    <span class="c1"># replace the parent face with an face from type AirBoundary</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">holes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1"># the entire face is created from holes</span>
+                        <span class="n">face</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">AirBoundary</span><span class="p">()</span>
+                        <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># there are multiple air boundaries. create an AirBoundary for each.</span>
+                    <span class="k">for</span> <span class="n">hole</span> <span class="ow">in</span> <span class="n">holes_2d</span><span class="p">:</span>
+                        <span class="n">hole</span> <span class="o">=</span> <span class="n">boundary_geometry_polygon2d</span><span class="o">.</span><span class="n">snap_to_polygon</span><span class="p">(</span>
+                            <span class="n">hole</span><span class="p">,</span> <span class="n">MODEL_TOLERANCE</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+                        <span class="c1"># map the hole back to 3D</span>
+                        <span class="n">hole</span> <span class="o">=</span> <span class="p">[</span><span class="n">boundary_geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">ver</span><span class="p">)</span> <span class="k">for</span> <span class="n">ver</span> <span class="ow">in</span> <span class="n">hole</span><span class="p">]</span>
+                        <span class="n">hole_geo</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">hole</span><span class="p">)</span>
+                        <span class="n">hole_face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">geometry</span><span class="o">=</span><span class="n">hole_geo</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">AirBoundary</span><span class="p">()</span>
+                        <span class="p">)</span>
+                        <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole_face</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># only part of the face is created from holes.</span>
+                <span class="c1"># 1. try to snap them to the face</span>
+                <span class="c1"># 2. separate holes from side air boundaries</span>
+                <span class="n">holes_2d_snapped</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">boundary_geometry_polygon2d</span><span class="o">.</span><span class="n">snap_to_polygon</span><span class="p">(</span><span class="n">hole</span><span class="p">,</span> <span class="n">MODEL_TOLERANCE</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">hole</span> <span class="ow">in</span> <span class="n">holes_2d</span>
+                <span class="p">]</span>
+                <span class="n">holes_3d_snapped</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">Face3D</span><span class="p">([</span><span class="n">boundary_geometry</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">hole</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">hole</span> <span class="ow">in</span> <span class="n">holes_2d_snapped</span>
+                <span class="p">]</span>
+
+                <span class="n">base_faces</span> <span class="o">=</span> <span class="n">boundary_geometry</span><span class="o">.</span><span class="n">coplanar_difference</span><span class="p">(</span>
+                    <span class="n">holes_3d_snapped</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">MODEL_TOLERANCE</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mf">0.01</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_faces</span><span class="p">,</span> <span class="n">Face3D</span><span class="p">):</span>
+                    <span class="c1"># change the base face to a list if the difference is a single face</span>
+                    <span class="n">base_faces</span> <span class="o">=</span> <span class="p">[</span><span class="n">base_faces</span><span class="p">]</span>
+                <span class="n">base_faces_holes</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">base_faces</span><span class="p">]</span>
+                <span class="n">holes_tracker</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">hole_count</span><span class="p">,</span> <span class="n">hole_geo</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">holes_3d_snapped</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">base_face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">base_faces</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">base_face</span><span class="o">.</span><span class="n">holes</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">for</span> <span class="n">f_hole</span> <span class="ow">in</span> <span class="n">base_face</span><span class="o">.</span><span class="n">holes</span><span class="p">:</span>
+                            <span class="n">f_hole_geo</span> <span class="o">=</span> <span class="n">Face3D</span><span class="p">(</span><span class="n">f_hole</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">hole_geo</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">f_hole_geo</span><span class="o">.</span><span class="n">center</span><span class="p">)</span> <span class="o">&lt;=</span> \
+                                    <span class="n">MODEL_TOLERANCE</span> <span class="o">*</span> <span class="mi">5</span><span class="p">:</span>
+                                <span class="c1"># this hole is inside the face</span>
+                                <span class="n">base_faces_holes</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f_hole_geo</span><span class="p">)</span>
+                                <span class="n">holes_tracker</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole_count</span><span class="p">)</span>
+                                <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">hole_count</span> <span class="ow">in</span> <span class="n">holes_tracker</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="c1"># the hole is not inside any of the faces</span>
+                        <span class="n">hole_face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">geometry</span><span class="o">=</span><span class="n">hole_geo</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">AirBoundary</span><span class="p">()</span>
+                        <span class="p">)</span>
+                        <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole_face</span><span class="p">)</span>
+
+                <span class="c1"># create holes</span>
+                <span class="n">holes_flattened</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">holes</span> <span class="ow">in</span> <span class="n">base_faces_holes</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">hole_geo</span> <span class="ow">in</span> <span class="n">holes_flattened</span><span class="p">:</span>
+                    <span class="n">hole_face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">geometry</span><span class="o">=</span><span class="n">hole_geo</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">AirBoundary</span><span class="p">()</span>
+                    <span class="p">)</span>
+                    <span class="c1"># add a key to user data to skip the face when translating</span>
+                    <span class="c1"># back from HBJSON to GEM</span>
+                    <span class="n">hole_face</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__ies_import__&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+                    <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole_face</span><span class="p">)</span>
+
+                <span class="c1"># add base faces</span>
+                <span class="k">for</span> <span class="n">base_face</span> <span class="ow">in</span> <span class="n">base_faces</span><span class="p">:</span>
+                    <span class="n">face</span> <span class="o">=</span> <span class="n">Face</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span> <span class="n">geometry</span><span class="o">=</span><span class="n">base_face</span><span class="p">)</span>
+                    <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="k">elif</span> <span class="n">gem_type</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">ContextBuilding</span><span class="p">,</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">Shade</span><span class="p">,</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">Shade_2</span><span class="p">):</span>
+            <span class="n">is_detached</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">ContextBuilding</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="n">face</span> <span class="o">=</span> <span class="n">_create_shade</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="p">,</span> <span class="n">is_detached</span><span class="p">)</span>
+            <span class="n">_update_name</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">display_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">TranslucentShade</span><span class="p">:</span>
+            <span class="c1"># ignore the hole. GEM has a strange way of building translucent shades</span>
+            <span class="n">face</span> <span class="o">=</span> <span class="n">_create_shade</span><span class="p">(</span>
+                <span class="n">boundary</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span> <span class="n">is_detached</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">user_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;__gem_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;translucent_shade&#39;</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">_update_name</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">display_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">Topography</span><span class="p">:</span>
+            <span class="c1"># Topography</span>
+            <span class="n">face</span> <span class="o">=</span> <span class="n">_create_shade</span><span class="p">(</span>
+                <span class="n">boundary</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="n">holes</span><span class="p">,</span> <span class="n">is_detached</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">user_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;__gem_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;topography&#39;</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">_update_name</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">display_name</span><span class="p">)</span>
+
+        <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">Space</span> <span class="ow">or</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">UnconditionedSpace</span><span class="p">:</span>
+        <span class="n">room</span> <span class="o">=</span> <span class="n">Room</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="n">faces</span><span class="o">=</span><span class="n">faces</span><span class="p">)</span>
+        <span class="n">_update_name</span><span class="p">(</span><span class="n">room</span><span class="p">,</span> <span class="n">display_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gem_type</span> <span class="o">==</span> <span class="n">GEM_TYPES</span><span class="o">.</span><span class="n">UnconditionedSpace</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">exclude_floor_area</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">room</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">faces</span>
+
+
+<div class="viewcode-block" id="model_from_gem">
+<a class="viewcode-back" href="../../honeybee_ies.reader.html#honeybee_ies.reader.model_from_gem">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_from_gem</span><span class="p">(</span>
+    <span class="n">gem_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Unnamed&#39;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Honeybee Model from the string contents of a VE GEM file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gem_str: Text string representation of the contents of a GEM file.</span>
+<span class="sd">        model_id: Text string to be applied as the Model identifier. Typically,</span>
+<span class="sd">            this is derived from the GEM file name. (Default: Unnamed).</span>
+<span class="sd">        model_name: Text string to be applied as the Model identifier. If None,</span>
+<span class="sd">            this will be the same as the model_id. (Default: None).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Honeybee Model derived from the GEM file contents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># parse the Rooms, Shades and ShadeMeshes</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="n">gem_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">LAYER&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">parsed_objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">_parse_gem_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span> <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">]</span>
+    <span class="n">rooms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">shades</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">shade_meshes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">parsed_objects</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Room</span><span class="p">):</span>
+            <span class="n">rooms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ShadeMesh</span><span class="p">):</span>
+            <span class="n">shade_meshes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shades</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="c1"># create the Model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span>
+        <span class="n">clean_string</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">rooms</span><span class="o">=</span><span class="n">rooms</span><span class="p">,</span> <span class="n">orphaned_shades</span><span class="o">=</span><span class="n">shades</span><span class="p">,</span>
+        <span class="n">shade_meshes</span><span class="o">=</span><span class="n">shade_meshes</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;Meters&#39;</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0001</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">model_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+
+<div class="viewcode-block" id="model_from_ies">
+<a class="viewcode-back" href="../../honeybee_ies.reader.html#honeybee_ies.reader.model_from_ies">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_from_ies</span><span class="p">(</span><span class="n">gem</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Honeybee Model from a VE GEM file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gem: String for the path to a VE GEM file.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Honeybee Model derived from the GEM file contents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load the contents of the GEM file</span>
+    <span class="n">gem_file</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">gem</span><span class="p">)</span>
+    <span class="n">file_contents</span> <span class="o">=</span> <span class="n">gem_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="c1"># return the Honeybee Model</span>
+    <span class="k">return</span> <span class="n">model_from_gem</span><span class="p">(</span><span class="n">file_contents</span><span class="p">,</span> <span class="n">clean_string</span><span class="p">(</span><span class="n">gem_file</span><span class="o">.</span><span class="n">stem</span><span class="p">),</span> <span class="n">gem_file</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2025, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
