@@ -28,10 +28,12 @@ def _gen_ve_id(display_name: str) -> str:
     # Replace matched characters with an empty string
     identifier = re.sub(pattern, '', display_name).upper()
     if len(identifier) < 2:
-        raise ValueError(
-            f'Invalid display name: {display_name}. The display name should at '
-            'least have two characters after removing the vowels.'
+        print(
+            f'Unable to generate a valid GEM identifier from this name "{display_name}". '
+            'Room display names must retain at least two characters after removing '
+            'vowels.'
         )
+        return 'ZZ'
     return identifier[:2]
 
 
