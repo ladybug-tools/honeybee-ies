@@ -346,7 +346,7 @@ def _parse_gem_segment(
             else:
                 raise ValueError(f'Unsupported opening type: {opening_type}')
 
-        if gem_type == GEM_TYPES.Space:
+        if gem_type == GEM_TYPES.Space or gem_type == GEM_TYPES.UnconditionedSpace:
             # A model face
             geometry = Face3D(boundary)
             face = Face(str(uuid.uuid4()), geometry=geometry)
@@ -463,9 +463,11 @@ def _parse_gem_segment(
 
         faces.append(face)
 
-    if gem_type == GEM_TYPES.Space:
+    if gem_type == GEM_TYPES.Space or gem_type == GEM_TYPES.UnconditionedSpace:
         room = Room(identifier, faces=faces)
         _update_name(room, display_name)
+        if gem_type == GEM_TYPES.UnconditionedSpace:
+            room.exclude_floor_area = True
         return room
     else:
         return faces

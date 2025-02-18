@@ -23,6 +23,7 @@ class GEM_TYPES(enum.Enum):
     """
     # '{CATEGORY}-{TYPE}-{SUBTYPE}-{LAYER}-{COLOR}-{COLORRGB}-{KEYWORD}'
     Space = '1-001-2001-01-00-16711680-IES'
+    UnconditionedSpace = '1-001-2002-01-00-16711680-IES'
     TranslucentShade = '1-001-2102-64-00-0-IES'
     ContextBuilding = '1-002-0000-62-00-16711935-IES'
     PV = '3-202-0000-01-00-32767-PVP'
@@ -37,7 +38,7 @@ class GEM_TYPES(enum.Enum):
             return cls.Space
         if category == 1 and subtype == 2002 and type_ == 1 and keyword == 'IES':
             # unconditioned space
-            return cls.Space
+            return cls.UnconditionedSpace
         elif category == 1 and subtype == 2102 and type_ == 1 and keyword == 'IES':
             return cls.TranslucentShade
         elif category == 1 and subtype == 0 and type_ == 2 and keyword == 'IES':

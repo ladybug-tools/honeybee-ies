@@ -409,12 +409,21 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
             open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
             faces.append('%s%d%s' % (face_str, open_count, open_str))
 
-    space = GEM_TYPES.Space.to_gem(
-        name=room.display_name, identifier=room.identifier,
-        vertices_count=len(unique_vertices),
-        face_count=face_count - air_boundary_count,
-        vertices=vertices, faces='\n'.join(faces)
-    )
+    is_void = room.exclude_floor_area
+    if is_void:
+        space = GEM_TYPES.UnconditionedSpace.to_gem(
+            name=room.display_name, identifier=room.identifier,
+            vertices_count=len(unique_vertices),
+            face_count=face_count - air_boundary_count,
+            vertices=vertices, faces='\n'.join(faces)
+        )
+    else:
+        space = GEM_TYPES.Space.to_gem(
+            name=room.display_name, identifier=room.identifier,
+            vertices_count=len(unique_vertices),
+            face_count=face_count - air_boundary_count,
+            vertices=vertices, faces='\n'.join(faces)
+        )
 
     # collect all the shades from room
     shades = [shade for shade in room.shades]
