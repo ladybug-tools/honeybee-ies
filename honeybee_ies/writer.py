@@ -455,9 +455,20 @@ def model_to_gem(model: Model, shade_thickness: float = 0.0):
         Text string representation of the contents of a GEM file derived from
         the input model.
     """
-    # ensure model is in metric and has identifiers that are acceptable for GEM
+    # duplicate model to avoid mutating it as we edit it for GEM export
+    original_model = model
     model = model.duplicate()
-    model.convert_to_units(units='Meters')
+    # scale the model if the units are not meters
+    if model.units != 'Meters':
+        model.convert_to_units('Meters')
+    # remove degenerate geometry within native IESVE tolerance of 0.001 meters
+    try:
+        model.remove_degenerate_geometry(0.001)
+    except ValueError:
+        error = 'Failed to remove degenerate Rooms.\nYour Model units system is: {}. ' \
+            'Is this correct?'.format(original_model.units)
+        raise ValueError(error)
+    # ensure model has identifiers that are acceptable for GEM
     _convert_room_ids(model)
     # create and return the GEM file string
     header = 'COM GEM data file exported by Pollination\\nANT'
