@@ -1,5 +1,6 @@
 # coding=utf-8
 """Model IES Properties."""
+from honeybee.units import parse_distance_string
 
 
 class ModelIESProperties(object):
@@ -43,6 +44,7 @@ class ModelIESProperties(object):
         msgs = []
         tol = self.host.tolerance
         ang_tol = self.host.angle_tolerance
+        e_tol = parse_distance_string('1mm', self.host.units)
 
         # perform checks for duplicate identifiers, which might mess with other checks
         msgs.append(self.host.check_all_duplicate_identifiers(False, detailed))
@@ -50,7 +52,7 @@ class ModelIESProperties(object):
         # perform several checks for the Honeybee schema geometry rules
         msgs.append(self.host.check_planar(tol, False, detailed))
         msgs.append(self.host.check_self_intersecting(tol, False, detailed))
-        msgs.append(self.host.check_degenerate_rooms(tol, False, detailed))
+        msgs.append(self.host.check_degenerate_rooms(e_tol, False, detailed))
 
         # perform geometry checks related to parent-child relationships
         msgs.append(self.host.check_sub_faces_valid(tol, ang_tol, False, detailed))
