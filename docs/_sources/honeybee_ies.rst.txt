@@ -1,0 +1,30 @@
+honeybee\_ies package
+=====================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_ies.cli
+   honeybee_ies.properties
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_ies.reader
+   honeybee_ies.templates
+   honeybee_ies.types
+   honeybee_ies.writer
+
+Module contents
+---------------
+
+.. automodule:: honeybee_ies
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+honeybee\_ies.cli.translate module
+==================================
+
+.. automodule:: honeybee_ies.cli.translate
+   :members:
+   :undoc-members:
+   :show-inheritance:
