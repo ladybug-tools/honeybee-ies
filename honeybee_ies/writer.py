@@ -403,9 +403,18 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
                 openings.append(_opening_to_ies(fg, sub_faces, 0))
                 open_count += len(sub_faces)
             if len(face.doors) != 0:
-                sub_faces = [dr.geometry for dr in face.doors]
-                openings.append(_opening_to_ies(fg, sub_faces, 1))
-                open_count += len(sub_faces)
+                opaque_doors, glass_doors = [], []
+                for dr in face.doors:
+                    if dr.is_glass:
+                        glass_doors.append(dr.geometry)
+                    else:
+                        opaque_doors.append(dr.geometry)
+                if len(glass_doors) != 0:
+                    openings.append(_opening_to_ies(fg, glass_doors, 0))
+                    open_count += len(glass_doors)
+                if len(opaque_doors) != 0:
+                    openings.append(_opening_to_ies(fg, opaque_doors, 1))
+                    open_count += len(opaque_doors)
             open_str = '\n' + '\n'.join(openings) if len(openings) != 0 else ''
             faces.append('%s%d%s' % (face_str, open_count, open_str))
 
