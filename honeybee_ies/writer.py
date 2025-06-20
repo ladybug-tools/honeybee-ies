@@ -374,6 +374,17 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
                 )
                 fgs = [face.geometry]
                 indexes = [[str(v + 1) for v in face_i[0]]]
+            except MemoryError:
+                # ignore the holes
+                print(
+                    f'Failed to resolve the holes for {room.display_name} likely '
+                    'because there are too many of them in a single room. Check the '
+                    'input model and try to decrease the number of holes by splitting '
+                    'the room. If the holes are because of column holes, try to merge '
+                    'them into the room itself.'
+                )
+                fgs = [face.geometry]
+                indexes = [[str(v + 1) for v in face_i[0]]]
             else:
                 face_count += len(fgs) - 1
                 indexes = [
