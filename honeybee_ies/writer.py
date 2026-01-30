@@ -477,6 +477,8 @@ def model_to_gem(model: Model, shade_thickness: float = 0.0):
         error = 'Failed to remove degenerate Rooms.\nYour Model units system is: {}. ' \
             'Is this correct?'.format(original_model.units)
         raise ValueError(error)
+    # split all room faces through their holes as they are not allowed in IES-VE
+    model.split_rooms_through_holes()
     # ensure model has identifiers that are acceptable for GEM
     _convert_room_ids(model)
     # create and return the GEM file string
