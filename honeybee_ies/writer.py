@@ -54,11 +54,14 @@ def _convert_room_ids(model: Model) -> Dict:
             id_counter[ve_identifier] = -1
         id_counter[ve_identifier] += 1
         full_ve_id = f'{ve_identifier}{id_counter[ve_identifier]:06d}'
-        id_mapper[identifier] = full_ve_id
+        full_ve_fallback_id =  f'RM{id_counter[ve_identifier]:06d}'
         try:
             room.identifier = full_ve_id
+            id_mapper[identifier] = full_ve_id
         except AssertionError:
-            room.identifier = f'RM{id_counter[ve_identifier]:06d}'
+            room.identifier = full_ve_fallback_id
+            id_mapper[identifier] = full_ve_fallback_id
+
     return id_mapper
 
 
@@ -461,7 +464,9 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
         return space
 
 
-def model_to_gem(model: Model, shade_thickness: float = 0.0):
+def model_to_gem(
+        model: Model, shade_thickness: float = 0.0,
+        convert_room_ids: bool = True):
     """Generate an IES GEM string representation of a Model.
 
     Args:
@@ -470,6 +475,10 @@ def model_to_gem(model: Model, shade_thickness: float = 0.0):
             used to extrude shades with no group id. IES doesn't consider the effect of
             shades with no thickness in SunCalc. This function extrudes the geometry to
             create a closed volume for the shade. (Default: 0.0).
+        convert_room_ids: A boolean to indicate wether the room IDs should be converted
+            to IESVE format as part of the translation. Only change this option to False
+            if you have already converted the rooms IDs before passing the model to
+            this function.(Default: True)
 
     Returns:
         Text string representation of the contents of a GEM file derived from
@@ -491,9 +500,10 @@ def model_to_gem(model: Model, shade_thickness: float = 0.0):
     # split all room faces through their holes as they are not allowed in IES-VE
     model.split_rooms_through_holes()
     # ensure model has identifiers that are acceptable for GEM
-    _convert_room_ids(model)
+    if convert_room_ids:
+        _convert_room_ids(model)
     # create and return the GEM file string
-    header = 'COM GEM data file exported by Pollination\\nANT'
+    header = 'COM GEM data file exported by Pollination\nANT'
     rooms_data = [room_to_ies(room, shade_thickness=shade_thickness)
                   for room in model.rooms]
     context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
@@ -504,7 +514,7 @@ def model_to_gem(model: Model, shade_thickness: float = 0.0):
 
 def model_to_ies(
     model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.0,
-    write_id_mapper=True
+    write_id_mapper: bool = True
         ) -> pathlib.Path:
     """Export a honeybee model to an IES GEM file.
 
@@ -524,34 +534,31 @@ def model_to_ies(
     Returns:
         Path to exported GEM file.
     """
-    # ensure model is in metric and has identifiers that are acceptable for GEM
-    model = model.duplicate()
-    model.convert_to_units(units='Meters')
-    id_mapper = _convert_room_ids(model)
+    out_folder = pathlib.Path(folder)
+    out_folder.mkdir(parents=True, exist_ok=True)
 
-    # get the text for the GEM file contents
-    header = 'COM GEM data file exported by Pollination\nANT\n'
-    rooms_data = [room_to_ies(room, shade_thickness=shade_thickness)
-                  for room in model.rooms]
-    context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
-    mesh_shades = shade_meshes_to_ies(model.shade_meshes)
+    if write_id_mapper:
+        # these lines for writing the id mapper is for backwards compatibility
+        model = model.duplicate()
+        id_mapper = _convert_room_ids(model=model)
+        convert_room_ids = False
+        mapper_name = f'{name[:-4]}.im.json'
+        mapper_out_file = out_folder.joinpath(mapper_name)
+        mapper_out_file.write_text(json.dumps(id_mapper))
+    else:
+        convert_room_ids = True
+
+    gem_content = model_to_gem(
+        model=model, shade_thickness=shade_thickness,
+        convert_room_ids=convert_room_ids
+    )
 
     # write to GEM
     name = name or model.display_name
     if not name.lower().endswith('.gem'):
         name = f'{name}.gem'
-    out_folder = pathlib.Path(folder)
-    out_folder.mkdir(parents=True, exist_ok=True)
     out_file = out_folder.joinpath(name)
     with out_file.open('w', encoding='utf-8') as outf:
-        outf.write(header)
-        outf.write('\n'.join(rooms_data) + '\n')
-        outf.write(context_shades)
-        outf.write(mesh_shades)
-
-    if write_id_mapper:
-        mapper_name = f'{name[:-4]}.im.json'
-        mapper_out_file = out_folder.joinpath(mapper_name)
-        mapper_out_file.write_text(json.dumps(id_mapper))
+        outf.write(gem_content)
 
     return out_file
