@@ -1,0 +1,18 @@
+honeybee\_ies.properties package
+================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_ies.properties.model
+
+Module contents
+---------------
+
+.. automodule:: honeybee_ies.properties
+   :members:
+   :undoc-members:
+   :show-inheritance:

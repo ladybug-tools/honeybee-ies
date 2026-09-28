@@ -1,0 +1,18 @@
+honeybee\_ies.cli package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_ies.cli.translate
+
+Module contents
+---------------
+
+.. automodule:: honeybee_ies.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
