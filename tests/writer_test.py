@@ -30,10 +30,10 @@ def test_air_boundary():
     outf = model_to_ies(model, out_folder.as_posix(), name='room_with_air_boundary')
     assert outf.exists()
     ab_str = '4 2\n' \
+        '   0.000000    3.000000\n' \
         '   0.000000    0.000000\n' \
         '   11.000000    0.000000\n' \
-        '   11.000000    3.000000\n' \
-        '   0.000000    3.000000\n'
+        '   11.000000    3.000000\n'
 
     assert ab_str in outf.read_text()
 
@@ -80,15 +80,15 @@ def test_shade_with_holes():
     assert outf.exists()
 
     hole_str = '4 2\n' \
-        '   8.000000    2.000000\n' \
         '   8.000000    4.000000\n' \
         '   3.000000    4.000000\n' \
         '   3.000000    2.000000\n' \
+        '   8.000000    2.000000\n' \
         '4 2\n' \
-        '   9.000000    7.000000\n' \
         '   9.000000    9.000000\n' \
         '   7.000000    9.000000\n' \
-        '   7.000000    7.000000\n'
+        '   7.000000    7.000000\n' \
+        '   9.000000    7.000000\n'
 
     assert hole_str in outf.read_text()
 
@@ -101,7 +101,7 @@ def test_model_with_holes():
     outf = model_to_ies(model, out_folder.as_posix(), name='model_with_holes')
     assert outf.exists()
 
-    room_str = 'IES Room w holes [RM000001]\n28 18'
+    room_str = 'IES Room w holes [RM000001]\n44 20'
 
     assert room_str in outf.read_text()
 
@@ -147,25 +147,25 @@ def test_model_with_topo():
 
     topo_str = 'IES Missing Space [MS000000]\n' \
         '8 6\n' \
+        '   -0.721300    20.133500    -0.017700\n' \
         '   9.303000    18.016400    -0.017700\n' \
         '   3.972000    13.144500    -0.017700\n' \
         '   -3.425000    16.664500    -0.017700\n' \
-        '   -0.721300    20.133500    -0.017700\n' \
+        '   9.303000    18.016400    3.682300\n' \
         '   -0.721300    20.133500    3.682300\n' \
         '   -3.425000    16.664500    3.682300\n' \
         '   3.972000    13.144500    3.682300\n' \
-        '   9.303000    18.016400    3.682300\n' \
         '4 1 2 3 4\n' \
         '0\n' \
         '4 5 6 7 8\n' \
         '0\n' \
-        '4 6 3 2 7\n' \
+        '4 8 7 4 3\n' \
         '0\n' \
-        '4 7 2 1 8\n' \
+        '4 5 8 3 2\n' \
         '0\n' \
-        '4 8 1 4 5\n' \
+        '4 6 5 2 1\n' \
         '0\n' \
-        '4 5 4 3 6\n' \
+        '4 7 6 1 4\n' \
         '0'
 
     assert topo_str in outf.read_text()
