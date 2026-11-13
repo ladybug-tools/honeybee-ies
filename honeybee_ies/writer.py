@@ -5,6 +5,8 @@ import math
 from typing import List, Union, Dict
 
 from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
+from ladybug.location import Location
+from ladybug.projectinfo import ProjectInfo
 from honeybee.model import Model, Shade, Room, AirBoundary, \
     RoofCeiling, Floor, ShadeMesh
 
@@ -54,7 +56,7 @@ def _convert_room_ids(model: Model) -> Dict:
             id_counter[ve_identifier] = -1
         id_counter[ve_identifier] += 1
         full_ve_id = f'{ve_identifier}{id_counter[ve_identifier]:06d}'
-        full_ve_fallback_id =  f'RM{id_counter[ve_identifier]:06d}'
+        full_ve_fallback_id = f'RM{id_counter[ve_identifier]:06d}'
         try:
             room.identifier = full_ve_id
             id_mapper[identifier] = full_ve_id
@@ -465,12 +467,16 @@ def room_to_ies(room: Room, shade_thickness: float = 0.01) -> str:
 
 
 def model_to_gem(
-        model: Model, shade_thickness: float = 0.0,
-        convert_room_ids: bool = True):
+    model: Model, project_info: ProjectInfo = None,
+    shade_thickness: float = 0.0, convert_room_ids: bool = True
+):
     """Generate an IES GEM string representation of a Model.
 
     Args:
         model: A honeybee model.
+        project_info: An optional ladybug ProjectInfo object that describes criteria
+            about the project site. When specified, this will result in the location
+            and north_angle into the GEM. (Default: None).
         shade_thickness:The thickness of the shade face in meters. This value will be
             used to extrude shades with no group id. IES doesn't consider the effect of
             shades with no thickness in SunCalc. This function extrudes the geometry to
@@ -502,8 +508,21 @@ def model_to_gem(
     # ensure model has identifiers that are acceptable for GEM
     if convert_room_ids:
         _convert_room_ids(model)
+
     # create and return the GEM file string
     header = 'COM GEM data file exported by Pollination\nANT'
+    if project_info is not None:
+        default_location = Location(
+            city='London Heathrow', country='United Kingdom',
+            latitude=51.48, longitude=-0.45, time_zone=0, elevation=25
+        )
+        location = default_location if project_info.location is None \
+            else project_info.location
+        site = '\nSITE\n{lat:.3f}  {long:.3f} {tz:.3f} {north:.3f}'.format(
+            lat=location.latitude, long=-location.longitude,
+            tz=location.time_zone, north=project_info.north
+        )
+        header = header + site
     rooms_data = [room_to_ies(room, shade_thickness=shade_thickness)
                   for room in model.rooms]
     context_shades = shades_to_ies(model.shades, thickness=shade_thickness)
@@ -515,7 +534,7 @@ def model_to_gem(
 def model_to_ies(
     model: Model, folder: str = '.', name: str = None, shade_thickness: float = 0.0,
     write_id_mapper: bool = True
-        ) -> pathlib.Path:
+) -> pathlib.Path:
     """Export a honeybee model to an IES GEM file.
 
     Args:

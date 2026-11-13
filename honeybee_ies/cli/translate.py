@@ -6,6 +6,7 @@ import logging
 import json
 
 from ladybug.commandutil import process_content_to_output
+from ladybug.projectinfo import ProjectInfo
 from honeybee.model import Model
 from honeybee_ies.writer import model_to_gem as model_to_gem_str
 from honeybee_ies.reader import model_from_ies
@@ -22,6 +23,11 @@ def translate():
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
+    '--project-info', '-pi', help='Full path to a ladybug ProjectInfo JSON that '
+    'describes criteria about the project site. When specified, this will result in the '
+    'north and location written into the GEM.', default=None, show_default=True,
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
     '--shade-thickness', '-st', help='Optional value for shade thickness in meters. '
     'This value will be used to extrude shades with no group id. IES doesn\'t consider '
     'the effect of shades with no thickness in SunCalc. This function extrudes the '
@@ -37,7 +43,7 @@ def translate():
     '--output-file', '-o', help='Optional GEM file path to output the GEM string '
     'of the translation. By default this will be printed out to stdout.',
     type=click.File('w'), default='-', show_default=True)
-def model_to_gem_cli(model_file, shade_thickness, name, folder, output_file):
+def model_to_gem_cli(model_file, project_info, shade_thickness, name, folder, output_file):
     """Translate a Model JSON file to an IES GEM file.
     \b
 
@@ -49,7 +55,7 @@ def model_to_gem_cli(model_file, shade_thickness, name, folder, output_file):
             if not name.lower().endswith('.gem'):
                 name = name + '.gem'
             output_file = os.path.join(folder, name)
-        model_to_gem(model_file, shade_thickness, output_file)
+        model_to_gem(model_file, project_info, shade_thickness, output_file)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -57,11 +63,14 @@ def model_to_gem_cli(model_file, shade_thickness, name, folder, output_file):
         sys.exit(0)
 
 
-def model_to_gem(model_file, shade_thickness=0, output_file=None):
+def model_to_gem(model_file, project_info=None, shade_thickness=0, output_file=None):
     """Translate a Model JSON file to an IES GEM file.
 
     Args:
         model_file: Full path to a Honeybee Model file (HBJSON or HBpkl).
+        project_info: Full path to a ladybug ProjectInfo JSON that describes
+            criteria about the project site. When specified, this will result
+            in the north and location written into the GEM.
         shade_thickness: Optional value for shade thickness in meters. This value
             will be used to extrude shades with no group id. IES does not consider
             the effect of shades with no thickness in SunCalc. This function
@@ -70,7 +79,11 @@ def model_to_gem(model_file, shade_thickness=0, output_file=None):
             translation. If None, the string will be returned from this function.
     """
     model = Model.from_file(model_file)
-    gem_str = model_to_gem_str(model, shade_thickness=shade_thickness)
+    if project_info is not None:
+        project_info = ProjectInfo.from_json(project_info)
+    gem_str = model_to_gem_str(
+        model, project_info=project_info, shade_thickness=shade_thickness
+    )
     return process_content_to_output(gem_str, output_file)
 
 
