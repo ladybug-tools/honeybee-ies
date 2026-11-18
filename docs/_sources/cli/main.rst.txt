@@ -1,0 +1,7 @@
+main
+====
+
+.. click:: honeybee_ies.cli.__init__:ies
+   :prog: honeybee-ies
+   :show-nested:
+   :commands: 

@@ -1,0 +1,7 @@
+honeybee\_ies.reader module
+===========================
+
+.. automodule:: honeybee_ies.reader
+   :members:
+   :undoc-members:
+   :show-inheritance:

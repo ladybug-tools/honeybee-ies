@@ -1,0 +1,7 @@
+honeybee\_ies.templates module
+==============================
+
+.. automodule:: honeybee_ies.templates
+   :members:
+   :undoc-members:
+   :show-inheritance:

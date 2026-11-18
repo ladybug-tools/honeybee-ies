@@ -1,0 +1,7 @@
+honeybee\_ies.properties.model module
+=====================================
+
+.. automodule:: honeybee_ies.properties.model
+   :members:
+   :undoc-members:
+   :show-inheritance:
