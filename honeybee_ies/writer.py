@@ -4,7 +4,7 @@ import pathlib
 import math
 from typing import List, Union, Dict
 
-from ladybug_geometry.geometry3d import Face3D, Polyface3D, Point3D
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, Face3D, Polyface3D
 from ladybug.location import Location
 from ladybug.projectinfo import ProjectInfo
 from honeybee.model import Model, Shade, Room, AirBoundary, \
@@ -81,7 +81,9 @@ def _opening_to_ies(
         A formatted string for the opening.
 
     """
-    if parent_geo.plane.n.z in (1, -1):
+    if round(parent_geo.plane.n.z, 4) in (1, -1):
+        clean_plane = Plane(n=Vector3D(0, 0, 1), o=parent_geo[0], x=Vector3D(1, 0, 0))
+        parent_geo = Face3D(parent_geo.boundary, clean_plane, parent_geo.holes)
         origin, flip = parent_geo.upper_right_corner, True
     elif parent_geo.plane.n.angle(Z_AXIS) < ROOF_ANGLE_TOLERANCE:
         origin, flip = parent_geo.lower_left_corner, True
